@@ -288,3 +288,15 @@
  .v5-app .player--opening .dialogue p{font-size:1.07rem!important;line-height:1.45!important}
  .v5-app .player--opening .next-action{width:100%;margin-top:7px!important}
 }
+
+/* V10 mobile settings: the only place for sound sources must stay directly accessible. */
+@media(max-width:680px){
+ .v5-app .site-head .header-settings{display:inline-flex!important;align-items:center;justify-content:center;min-width:36px;min-height:38px;font-size:1.2rem;padding:7px!important;border:1px solid #586772;border-radius:10px}
+ .v5-app .site-head .header-account{gap:5px}
+ .v5-app .site-head .header-profile{min-width:34px;padding:7px!important}
+ .v5-app .site-head .sound-btn{min-width:40px;padding:8px!important;font-size:.73rem}
+ .v5-app .site-head{gap:6px;padding-left:12px;padding-right:12px}
+ .v5-app .site-head .wordmark{min-width:0;gap:7px}
+ .v5-app .site-head .wordmark strong{font-size:.91rem;letter-spacing:.13em}
+ .v5-app .site-head .wordmark small{font-size:.45rem}
+}
