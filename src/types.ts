@@ -7,5 +7,5 @@ export type NarrativeNode = {
   observation?:string; perspective?:string; takeaway?:string;
 };
 export interface Episode {id:string; title:string; subtitle:string; emotions:Emotion[]; age:string; duration:string; image:string; start:string; nodes:Record<string,NarrativeNode>}
-export type HistoryEntry = {id:string; label:string; words:string; sceneId:string;};
+export type HistoryEntry = {id:string; label:string; words:string; sceneId:string; emotion?:string;};
 export type StoryState = {nodeId:string; visited:string[]; history:HistoryEntry[]; impact:Impact; reflection:string; customResponse?:string};

@@ -13,5 +13,5 @@ test('Progress includes completion gate and deduplicated endings',()=>{
  const text=read('../src/engine/progress.ts');
  assert.match(text,/if\(episode\.nodes\[endingId\]\?\.kind!=='ending'\)/);
  assert.match(text,/prev\.includes\(endingId\)/);
- assert.match(text,/every\(e=>p\.completed\.includes\(e\.id\)\)/);
+ assert.match(text,/every\(e=>Array\.isArray\(p\.endings\[e\.id\]\)/);
 });
