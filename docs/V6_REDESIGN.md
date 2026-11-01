@@ -5,7 +5,7 @@
 - Une seule identité visuelle : marine, ivoire et doré, image narrative non incrustée d’UI.
 - Catalogue de six histoires jouables et progression par fin (9 par épisode).
 - Sur grand écran : histoire principale + bibliothèque latérale. Sur mobile : lecture compacte, cartes en lignes et navigation fixe accessible.
-- Six scènes illustrées distinctement cadrées ; les épisodes 2 et 4 reprennent pour le moment deux cadrages d’une même scène dramatique, une illustration propre à l’épisode 2 demeure recommandée.
+- Six épisodes avec des illustrations narratives distinctes, sans texte incrusté dans les scènes. La couverture de l’épisode 2 montre explicitement le téléphone et le regret provoqué par le message.
 - Bibliothèque Louis, Ethan (anglais), Où est maman ?, Brindétoile.
 
 ## Provenance et liens
