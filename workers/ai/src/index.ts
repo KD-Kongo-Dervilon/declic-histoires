@@ -13,11 +13,7 @@ const episodeContexts:Record<string,string> = {
  'dire-non':'Jules refuse un défi qui blesse quelqu’un, sous la pression d’Adam.',
  'un-pas-vers-toi':'Ana hésite à se réconcilier avec son amie Yasmine après une dispute.'
 };
-const fallback:Record<Intent,string> = {
-  express:'Noa s’arrête et t’écoute. « Je ne savais pas que ça t’avait blessée… »',
-  avoid:'Noa hésite. « Tu dis que ça va, mais j’ai l’impression que non. »',
-  ask:'Noa prend le temps de répondre. « Je pensais vraiment que tu ne voulais plus venir. »'
-};
+const fallback:Record<Intent,string> = {express:'Je t’écoute. Je ne pensais pas que tu te sentais ainsi.',avoid:'Tu ne sembles pas à l’aise. On peut en parler plus tard.',ask:'Je vais essayer de t’expliquer ce qui s’est passé.'};
 function json(data:unknown,status=200,origin=''){return new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store',...(origin?{'Access-Control-Allow-Origin':origin,'Vary':'Origin'}:{})}})}
 function inferIntent(text:string):Intent{const t=text.toLowerCase();if(/\b(pourquoi|comment|comprendre|expliquer|qu.est.ce|raison)\b/.test(t))return 'ask';if(/\b(pas grave|rien|laisse|oublie|tant pis|plus tard)\b/.test(t))return 'avoid';return 'express'}
 function parseOutput(s:string,intent:Intent){try{const a=s.indexOf('{'),b=s.lastIndexOf('}');const obj=JSON.parse(s.slice(a,b+1)) as {intent?:unknown;reply?:unknown;perceivedEmotion?:unknown};const valid=['express','avoid','ask'].includes(String(obj.intent))?obj.intent as Intent:intent;const reply=typeof obj.reply==='string'&&obj.reply.length>4&&obj.reply.length<=250?obj.reply:fallback[valid];const perceivedEmotion=typeof obj.perceivedEmotion==='string'&&obj.perceivedEmotion.length<=90?obj.perceivedEmotion:'Les émotions du personnage peuvent avoir plusieurs interprétations.';return {intent:valid,reply,perceivedEmotion};}catch{return {intent,reply:fallback[intent],perceivedEmotion:'Une interprétation possible, pas une certitude.'}}}

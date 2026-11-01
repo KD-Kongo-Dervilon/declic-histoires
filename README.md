@@ -5,7 +5,7 @@ PWA narrative interactive accessible sur téléphone, tablette et ordinateur.
 - 6 épisodes (chacun 3 scènes d'introduction, 2 décisions et **9 fins**) ; 54 fins à explorer.
 - Les épisodes se débloquent **un par un après avoir terminé une fin** de l'épisode précédent.
 - Compteur de fins inédites par épisode + compteur général ; stockage local.
-- Couvertures distinctes pour le catalogue, une scène de lecture mobile compacte.
+- Visuels distincts pour le catalogue (recadrages conceptuels à remplacer avant une commercialisation), lecture mobile compacte.
 - Audio d'ambiance facultatif, sans lecture automatique.
 - Réponses écrites libres avec adaptation locale et Worker Cloudflare IA facultatif.
 - Romans/univers externes présentés sans faux lien Amazon.

@@ -1,35 +1,17 @@
-# Contrôle qualité avant mise en production
+# Plan qualité V5
 
-## Fonctionnel
+- [x] 6 épisodes, chacun 9 fins distinctes et atteignables (tests déterministes).
+- [x] Le premier épisode s'ouvre, les cinq autres restent verrouillés initialement.
+- [x] Une fin de l'épisode N déverrouille N+1.
+- [x] Rejouer la même fin n'incrémente pas le compteur.
+- [x] 390 px, 320 px, 1024 px, 1440 px : parcours 01 → 02 → 03 testé sur Vercel (avant dernier patch graphique).
+- [x] Aucun débordement horizontal observé aux quatre résolutions testées.
+- [x] 9 tests de code réussis en local sous Node 22.
+- [ ] Vérification Safari iOS sur appareil réel.
+- [ ] Mode hors ligne validé sur appareil réel après installation.
+- [ ] Relecture indépendante et validation pédagogique des épisodes 2 à 6.
+- [ ] Cinq couvertures finales originales à produire avant commercialisation.
+- [ ] Worker Cloudflare connecté, quotas et confidentialité vérifiés.
+- [ ] Pages Amazon des livres confirmées avant l'ajout d'un lien d'achat.
 
-- [ ] `npm test` : graphe valide, 9 fins accessibles, aucun noeud orphelin
-- [ ] `npm run build` : TypeScript strict et build Vite réussis
-- [ ] Catalogue : filtres opérationnels, un seul épisode jouable, autres épisodes non cliquables
-- [ ] Avant les décisions : trois scènes de contexte et dialogue différencié
-- [ ] Choix : chaque clic mène au bon dialogue et à une suite distincte
-- [ ] Débrief : parcours, perspective et note locale ; retour catalogue et rejouer
-- [ ] Réponse libre : mode local cohérent sans Cloudflare, contrôle input
-
-## Visuel et accessible
-
-- [ ] iPhone Safari et iPad paysage : image ENTIEREMENT visible dans le lecteur
-- [ ] La couverture catalogue utilise cover ; aucun visage coupé par le texte
-- [ ] Test clavier, focus, VoiceOver, 320/390/768/1024/1440 px
-- [ ] Contrastes et préfèrences de réduction d'animation
-- [ ] Aucune image cassée / écran noir / script bloqué
-
-## PWA et audio
-
-- [ ] Production HTTPS ; manifeste et icônes chargent correctement
-- [ ] Installation réelle sur écran d'accueil iOS
-- [ ] Hors ligne après première visite : épisode jouable ; IA en repli local
-- [ ] Son activé uniquement sur action utilisateur ; contrôle muet
-
-## Métier
-
-- [ ] Relecture éditoriale et pédagogique par un professionnel du public cible
-- [ ] Tests réels avec adolescents consentants et accompagnement approprié
-- [ ] Informations de confidentialité vérifiées avant intégration IA
-- [ ] Contrôle des quotas et limitation de débit Cloudflare avant activation publique
-
-Le fait qu'une case de cette liste existe ne signifie pas qu'elle a été validée. Documenter les captures et la date de chaque test avant tout passage en production.
+Règle : ne pas marquer « validé » un service qui n'a pas été testé sur le matériel ou le compte concerné.

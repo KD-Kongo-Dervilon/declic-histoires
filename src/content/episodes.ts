@@ -1,4 +1,4 @@
-import {episode01} from './episode01';
+import {episode01} from './episode01.ts';
 import type {Episode, Choice, NarrativeNode, Emotion} from '../types';
 const C=(id:string,title:string,words:string,next:string,intention:Choice['intention'],r:number,t:number,e:number):Choice=>({id,title,words,next,intention,impact:{relation:r,tension:t,expression:e}});
 type Draft={id:string;number:number;title:string;subtitle:string;emotions:Emotion[];intro:[string,string,string];introSpeech:[string,string,string];protagonist:string;other:string;setup:string;decision:string;choices:[string,string,string];reactions:[string,string,string];reactionTitles:[string,string,string];secondQuestion:[string,string,string];secondChoices:[string,string,string][];endings:[string,string,string][];perspectives:[string,string,string];};

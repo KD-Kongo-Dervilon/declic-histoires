@@ -1,39 +1,34 @@
-# Déployer DÉCLIC : Vercel + Cloudflare Workers AI
+# Déploiement DÉCLIC V5
 
-## 1. Frontend (fonctionne sans IA)
+## Architecture et build
 
-Prérequis : Node 22.12+ (ou version LTS prise en charge par Vite), npm.
+- Frontend : React 19, TypeScript, Vite 8, PWA Workbox.
+- Hébergement du frontend : Vercel (build `npm run build`, sortie `dist`, framework Vite).
+- Dépôt GitHub : `KD-Kongo-Dervilon/declic-histoires`.
+- Les épisodes, médias et fichiers PWA sont regroupés dans la même origine HTTPS pour le cache hors ligne.
+
+## Commandes de validation
 
 ```bash
-npm install
+npm ci
 npm test
 npm run build
-npm run preview
 ```
 
-Sur Vercel : framework **Vite**, dossier racine de ce dépôt, build `npm run build`, sortie `dist`. Le projet actuel à remplacer **après test** est `declic-histoires` ; URL de production : https://declic-histoires.vercel.app/.
+Les tests des histoires vérifient 6 graphes indépendants, 9 fins atteignables par épisode, 54 fins en tout, et le déblocage strict d'un seul nouvel épisode après une première fin.
 
-## 2. Worker Cloudflare (activation de l'IA — facultatif)
+## PWA sur iPhone
 
-Ce Worker **n'est pas déployé** sans connexion à un compte Cloudflare. L'application reste jouable.
+Ouvrir le site publié en HTTPS dans Safari > Partager > Ajouter à l'écran d'accueil. Le service worker doit être actif et avoir rempli le cache au cours d'une première visite connectée. Tester réellement hors ligne sur iPhone avant de communiquer la fonctionnalité comme certifiée iOS.
 
-```bash
-cd workers/ai
-npm install
-npx wrangler login
-npm run deploy
-```
+## IA Cloudflare, facultative et non active par défaut
 
-Le compte Cloudflare doit avoir accès aux Workers AI. Le fichier `wrangler.toml` configure `AI` et `ALLOWED_ORIGIN`. Vérifier le domaine exact, puis récupérer l'URL HTTPS `https://declic-narrative-ai.<compte>.workers.dev` créée par Cloudflare. NE PAS l'inventer.
+Dans `workers/ai`, déployer le Worker sur un compte Cloudflare autorisé, créer le binding `AI`, configurer `ALLOWED_ORIGIN` avec l'URL frontend exacte et définir `AI_MODEL`. Ajouter dans Vercel `VITE_DEClic_AI_URL=https://<worker-domaine>` puis reconstruire le frontend. Ne jamais transmettre de secret au navigateur, ni demander des données identifiantes à un mineur. Le texte libre ne doit pas dépasser 220 caractères. Sans Worker, la décision adaptative utilise une interprétation locale scénarisée.
 
-Dans les variables d'environnement **Vercel** : `VITE_DEClic_AI_URL=<URL https du Worker>` ; redéployer le frontend (Vite incorpore les variables publiques au build). Aucune clé secrète à mettre dans `VITE_`.
+## GitHub → Vercel
 
-Tester `GET /health` et `POST /adapt`. Avec les limites Cloudflare réelles en vigueur, activer des contrôles anti-abus et une limitation de débit **avant** l'ouverture publique de l'IA. Le quota gratuit peut être épuisé.
+La publication a été faite à partir de la source Git. Si le projet Vercel existant n'est pas lié à GitHub en mode Auto-Deploy, une nouvelle mise à jour GitHub n'actualisera pas seule la production : vérifier le Git Integration du projet ou effectuer un déploiement GitSource explicite. Ne pas créer d'URLs d'achat non vérifiées.
 
-## 3. Installation iPhone/iPad
+## Avant vente
 
-Ouvrir l'adresse HTTPS dans Safari. Bouton **Partager** → **Ajouter à l'écran d'accueil** (libellé peut varier) → Ajouter. Revenir après une première navigation connectée et tester en mode avion. Les fichiers statiques se mettent en cache ; l'IA, qui requiert Internet, revient automatiquement au mode scénarisé.
-
-## 4. Prérequis qualité avant diffusion professionnelle
-
-Vérifier iPhone Safari réel, tablette paysage, Android Chrome, Chrome desktop ; 9 fins ; design sans image rognée dans le lecteur ; clavier et VoiceOver ; contraste ; réactions crédibles relues ; mode son. Faire relire le contenu par un éducateur et des adolescents pour s'assurer de l'accessibilité, sans utiliser l'histoire pour mesurer un état clinique.
+Les couvertures des épisodes 2 à 6 et les visuels des livres sont des extraits de maquettes graphiques et nécessitent des illustrations finales autonomes. Les dialogues et le design doivent être testés avec des éducateurs et des adolescents. Le mode Cloudflare IA nécessite un contrôle du coût, des réponses et des données personnelles avant activation.
