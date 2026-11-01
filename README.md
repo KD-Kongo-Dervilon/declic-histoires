@@ -1,51 +1,45 @@
-# DÉCLIC — Ce qu'on n'a pas dit
+# DÉCLIC — Histoires à vivre
 
-**PWA narrative interactive (épisode pilote)** destinée à susciter des échanges sur l'amitié, les émotions et les décisions. L'application est en français, mobile-first, utilisable sans compte, et consultable hors connexion *après mise en cache lors d'une première visite sur HTTPS*.
+> **Une histoire que tu ne regardes pas seulement : tu la vis.**
 
-**Démo publique :** https://declic-histoires.vercel.app/
+DÉCLIC est une PWA narrative francophone : incarnation de Léa, conversation difficile avec Noa, émotions, décisions divergentes, conséquences et changement de point de vue. Le projet est au stade **pilote**, sans prétention clinique et sans fonctionnalités payantes.
 
-## Fonctionnalités
+**Production actuelle (version précédente, le temps de valider cette V4) :** https://declic-histoires.vercel.app/
 
-- Une histoire interactive, **deux décisions**, **neuf dénouements**.
-- Illustration originale, dialogues scénarisés, interface adaptée au téléphone.
-- Ambiance sonore facultative, bilan personnel imprimable, sauvegarde locale.
-- Manifeste PWA, icônes, service worker, ressources locales.
+## Contenu de cette version
 
-## Essayer en local
+- Épisode « Ce qu'on n'a pas dit » : 3 scènes de contexte, 2 décisions, 9 fins originales.
+- Catalogue filtrable par émotions, avec 1 épisode jouable et 5 futurs épisodes clairement identifiés.
+- Narration cinématographique, illustration 16:9 sans typographie incrustée, son d'ambiance original facultatif.
+- Débriefing, choix émotionnel explicite, prise de perspective, réflexion stockée localement.
+- Réponse libre et IA Cloudflare facultative avec repli local sans abonnement.
+- PWA hors ligne après chargement HTTPS : manifeste, icônes, service worker.
+- Architecture React + TypeScript strict + Vite ; Worker Cloudflare isolé.
 
-```bash
-git clone https://github.com/KD-Kongo-Dervilon/declic-histoires.git
-cd declic-histoires
-python3 -m http.server 8765
-```
-
-Ouvrir `http://localhost:8765`. Ne pas lancer `index.html` via `file://` : les règles des navigateurs et de la PWA diffèrent.
-
-## Tests
+## Démarrer
 
 ```bash
-node tests/test_engine.cjs
-python3 tests/test_files.py
+npm install
+npm run dev
 ```
 
-Pour l'assurance qualité visuelle et les tests sur vrai iPhone, voir `docs/DEPLOIEMENT.md`.
+Ouvrir http://localhost:5173 ; pour tester le build :
 
-## Publication et synchronisation
+```bash
+npm test
+npm run build
+npm run preview
+```
 
-La version de production est accessible sur https://declic-histoires.vercel.app/. Le déploiement initial a été effectué depuis les fichiers sources. **Le projet Vercel n'est pas encore connecté à ce dépôt GitHub : les nouveaux commits GitHub ne déclenchent pas automatiquement de publication.** Pour cela, connecter ce dépôt depuis Vercel (paramètres Git du projet) ou créer un projet Git-intégré séparé. Consulter `docs/DEPLOIEMENT.md`.
+## Architecture et documentation
 
-## Déployer
+- [Vision produit et parcours utilisateur](docs/VISION_PRODUIT.md)
+- [Architecture, contrat IA, sécurité, gestion des épisodes](docs/ARCHITECTURE.md)
+- [Déploiement Vercel et Cloudflare / Installation mobile](docs/DEPLOIEMENT.md)
+- [Checklist de validation](docs/QUALITE.md)
 
-Le projet est **statique** : publier toute l'arborescence à la racine de Vercel, en mode *Other* / sans framework. Voir `docs/DEPLOIEMENT.md` pour le contrôle sur URL HTTPS, le mode hors connexion et l'installation iOS.
+## Limites honnêtes
 
-## Maintenir
+Il n'y a **pas encore de Worker IA actif** : il nécessite la connexion à un compte Cloudflare, ses ressources et ses quotas. Quand il n'est pas configuré, les décisions et neuf fins fonctionnent totalement hors ligne. Les bruitages sont des ambiances originales de synthèse, pas des voix doublées ni des animations labiales. Le catalogue contient cinq concepts non encore produits.
 
-Lire [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) pour comprendre les responsabilités des modules et la manière de faire évoluer les épisodes.
-
-## Attention pédagogique
-
-Les scènes sont fictives et servent de support à la discussion. Il n'existe pas de "bonne réponse" universelle et l'application ne fournit ni score, ni diagnostic, ni évaluation clinique. Tester auprès de professionnels et des publics concernés avant tout usage commercial ou institutionnel.
-
-## Statut
-
-**Prototype pilote** : doublages et synchronisation labiale non inclus. Pas de données envoyées à un serveur. La PWA est publiée sur Vercel en HTTPS. Tester l'installation sur un véritable iPhone Safari avant de valider cette fonctionnalité.
+Ne pas considérer ce pilote comme validé par des professionnels ou prêt à être vendu sans test utilisateur.

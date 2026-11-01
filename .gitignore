@@ -1,6 +1,12 @@
 node_modules/
-.vercel/
+dist/
+.vite/
+.env
+.env.local
+.env.production
+*.log
 .DS_Store
+coverage/
 playwright-report/
 test-results/
-*.log
+.wrangler/
