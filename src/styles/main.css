@@ -259,3 +259,32 @@
 .narrative-consequences article{display:grid;grid-template-columns:160px minmax(0,1fr);align-items:center;gap:15px;padding:14px 0;border-top:1px solid #ffffff21}
 .narrative-consequences article>div{display:flex;flex-wrap:wrap;gap:9px}.narrative-consequences article span{padding:8px 11px;border-radius:9px;background:#0f222c;color:#f1d4ae;font-size:.8rem}
 @media(max-width:680px){.narrative-consequences article{grid-template-columns:1fr;gap:8px}.narrative-consequences article span{font-size:.76rem}}
+
+/* V10 — sound controls and destructive action are confined to settings */
+.settings-audio{margin:26px 0 16px;padding-top:22px;border-top:1px solid #425761}
+.settings-audio>p{font-size:.88rem;color:#b9cbd1;line-height:1.6}
+.settings-audio .sound-studio{max-width:none;margin:14px 0;padding:4px 16px 16px;border:1px solid #466070;border-radius:14px;background:#102631}
+.settings-audio .sound-studio__top strong{font-size:.87rem}
+.settings-audio .sound-studio__top span{font-size:.76rem}
+.settings-grid .settings-danger{margin-top:32px;border:1px solid #775a54;background:#211c20;color:#eee5df}
+.settings-grid .settings-danger>summary{cursor:pointer;font-weight:650;color:#f4d4bb;font-size:.9rem;padding:4px 0}
+.settings-grid .settings-danger:not([open]){padding:16px 22px}
+.settings-grid .settings-danger[open]{padding:18px 24px}
+.settings-grid .settings-danger button{border-color:#d7a69b;color:#f6c9bf}
+.story-prose{white-space:normal;max-width:62ch}
+.story-prose p{margin:0 0 1.15em;line-height:1.78}
+.story-prose p:last-child{margin-bottom:0}
+@media(max-width:680px){
+ .story-panel .story-prose{font-size:calc(.96rem * var(--reader-scale,1));line-height:1.7}
+ .story-panel .story-prose p{line-height:1.68;margin-bottom:.9em}
+ .settings-audio .sound-studio{padding:4px 12px 14px}
+ .v5-app .player--opening .player-visual{height:148px!important;min-height:0!important;aspect-ratio:auto!important}
+ .v5-app .player--opening .player-visual__overlay{display:none}
+ .v5-app .player--opening .story-panel{padding-top:16px!important}
+ .v5-app .player--opening .player-topline{margin-bottom:12px!important}
+ .v5-app .player--opening .progress-wrap{margin-bottom:18px!important}
+ .v5-app .player--opening .story-panel>h1{font-size:clamp(1.75rem,7vw,2.2rem)!important;margin:7px 0 13px!important;line-height:1.12}
+ .v5-app .player--opening .dialogue{margin:10px 0 13px!important;padding:10px 13px!important}
+ .v5-app .player--opening .dialogue p{font-size:1.07rem!important;line-height:1.45!important}
+ .v5-app .player--opening .next-action{width:100%;margin-top:7px!important}
+}
