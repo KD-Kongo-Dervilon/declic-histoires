@@ -2,6 +2,8 @@
 
 **PWA narrative interactive (épisode pilote)** destinée à susciter des échanges sur l'amitié, les émotions et les décisions. L'application est en français, mobile-first, utilisable sans compte, et consultable hors connexion *après mise en cache lors d'une première visite sur HTTPS*.
 
+**Démo publique :** https://declic-histoires.vercel.app/
+
 ## Fonctionnalités
 
 - Une histoire interactive, **deux décisions**, **neuf dénouements**.
@@ -12,7 +14,8 @@
 ## Essayer en local
 
 ```bash
-cd DEClic_Release
+git clone https://github.com/KD-Kongo-Dervilon/declic-histoires.git
+cd declic-histoires
 python3 -m http.server 8765
 ```
 
@@ -26,6 +29,10 @@ python3 tests/test_files.py
 ```
 
 Pour l'assurance qualité visuelle et les tests sur vrai iPhone, voir `docs/DEPLOIEMENT.md`.
+
+## Publication et synchronisation
+
+La version de production est accessible sur https://declic-histoires.vercel.app/. Le déploiement initial a été effectué depuis les fichiers sources. **Le projet Vercel n'est pas encore connecté à ce dépôt GitHub : les nouveaux commits GitHub ne déclenchent pas automatiquement de publication.** Pour cela, connecter ce dépôt depuis Vercel (paramètres Git du projet) ou créer un projet Git-intégré séparé. Consulter `docs/DEPLOIEMENT.md`.
 
 ## Déployer
 
@@ -41,4 +48,4 @@ Les scènes sont fictives et servent de support à la discussion. Il n'existe pa
 
 ## Statut
 
-**Prototype pilote** : doublages et synchronisation labiale non inclus. Pas de données envoyées à un serveur. La PWA ne sera installable qu'une fois publiée en HTTPS.
+**Prototype pilote** : doublages et synchronisation labiale non inclus. Pas de données envoyées à un serveur. La PWA est publiée sur Vercel en HTTPS. Tester l'installation sur un véritable iPhone Safari avant de valider cette fonctionnalité.
