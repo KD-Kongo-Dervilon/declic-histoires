@@ -240,3 +240,22 @@
 .is-reduced-motion *, .is-reduced-motion *::before,.is-reduced-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 @media(max-width:900px){.learning-cols{grid-template-columns:1fr}.header-profile span{display:none}.header-account{gap:5px}.header-profile,.header-settings{padding:8px;font-size:.86rem}}
 @media(max-width:680px){.insights-page{padding:18px 14px 110px}.insights-header h1{font-size:2.4rem}.insights-tabs{margin-top:6px}.insights-tabs button{padding:12px 15px}.insights-section{padding:18px}.ending-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.ending-grid>div{min-height:88px}.ending-grid strong{font-size:.7rem}.profile-card{gap:14px;align-items:flex-start}.profile-avatar{width:60px;height:60px;font-size:1.5rem}.profile-card h2{font-size:1.5rem}.site-head .header-settings{display:none}.site-head .header-profile{border:0}.hero-episode-tag{font-size:.75rem}.hero-meta{font-size:.82rem}.story-text{line-height:1.75}.dashboard-actions{overflow-x:auto}.dashboard-actions button{white-space:nowrap}}
+
+/* Phone imagery: full-bleed centered cover at the source illustration's wide aspect ratio. */
+@media(max-width:760px){
+ .v5-app .catalog-dashboard .landing-top .feature-hero__photo{
+   background-size:cover!important;background-position:50% 50%!important;background-color:#081720!important;
+ }
+ .v5-app .catalog-dashboard .v5-card .episode-card__art img{
+   object-fit:cover!important;object-position:center center!important;
+ }
+ .v5-app .player .story-art__image{
+   object-fit:cover!important;object-position:center center!important;
+ }
+}
+.narrative-consequences{margin:0 0 30px;border:1px solid #805f45;border-radius:16px;padding:20px;background:linear-gradient(120deg,#263139,#142731)}
+.narrative-consequences h3{font:normal 1.5rem Georgia,serif;margin-bottom:8px}
+.narrative-consequences>p{color:#cbd4d8;line-height:1.5;font-size:.87rem}
+.narrative-consequences article{display:grid;grid-template-columns:160px minmax(0,1fr);align-items:center;gap:15px;padding:14px 0;border-top:1px solid #ffffff21}
+.narrative-consequences article>div{display:flex;flex-wrap:wrap;gap:9px}.narrative-consequences article span{padding:8px 11px;border-radius:9px;background:#0f222c;color:#f1d4ae;font-size:.8rem}
+@media(max-width:680px){.narrative-consequences article{grid-template-columns:1fr;gap:8px}.narrative-consequences article span{font-size:.76rem}}

@@ -39,6 +39,12 @@ export function Insights(props:InsightsProps){
  const journeys=[...(progress.journeys||[])].reverse();
  const total=episodes.reduce((n,e)=>n+endingCount(progress,e.id),0);
  const tallies=emotionTallies(progress);
+ const narrativeConsequences=journeys.slice(0,6).map(j=>({
+  id:j.id,episode:episodes.find(e=>e.id===j.episodeId)?.title||'Histoire',
+  relation:j.impact.relation>1?'Lien qui s’ouvre':j.impact.relation<0?'Lien fragilisé':'Lien incertain',
+  tension:j.impact.tension>1?'Tension accrue':j.impact.tension<0?'Tension apaisée':'Tension encore présente',
+  expression:j.impact.expression>1?'Les mots ont trouvé une place':j.impact.expression<0?'Des non-dits persistent':'L’expression reste hésitante'
+ }));
  const titles:Record<InsightsMode,string>={emotions:'Mes émotions',journal:'Mon parcours',learning:'Débrief & apprentissages',endings:'Les fins à découvrir',profile:'Mon profil',settings:'Paramètres'};
  return <main className="insights-page">
   <div className="insights-header"><span className="eyebrow">TON ESPACE DÉCLIC · PERSONNEL ET LOCAL</span><h1>{titles[mode]}</h1><p>Ton histoire change selon tes décisions. Tu peux explorer les autres chemins sans être jugé.</p></div>
@@ -46,7 +52,8 @@ export function Insights(props:InsightsProps){
    {(['emotions','journal','learning','endings','profile','settings'] as const).map(s=><button key={s} className={mode===s?'current':''} onClick={()=>onGo(s)} aria-current={mode===s?'page':undefined}>{titles[s]}</button>)}
   </nav>
   {mode==='emotions'&&<section className="insights-section"><div className="insights-section__title"><h2>Ce que tu as ressenti en jouant</h2><p>Ce sont uniquement les émotions que tu as indiquées au moment des choix. DÉCLIC ne prétend pas deviner tes émotions.</p></div>
-   {tallies.length?<div className="emotion-meters">{tallies.map(([name,count])=><article key={name}><div><strong>{name}</strong><span>Ressentie dans {count} parcours</span></div><div className="emotion-meter"><i style={{width:`${100*count/Math.max(...tallies.map(x=>x[1]))}%`}}/></div><p>{emotionDescriptions[name]||'Chaque ressenti mérite qu’on lui donne une place.'}</p></article>)}</div>:<div className="empty-insight"><h3>Aucune émotion enregistrée pour le moment</h3><p>Au prochain choix dans une histoire, sélectionne le ressenti qui te correspond. Tu le retrouveras ici après avoir terminé une fin.</p><button className="btn btn-primary" onClick={()=>onPlay(0)}>Vivre la première histoire →</button></div>}
+   {narrativeConsequences.length>0&&<div className="narrative-consequences"><h3>Comment tes choix ont fait évoluer les personnages</h3><p>Ces indicateurs décrivent les conséquences de la fiction, pas ton état psychologique.</p>{narrativeConsequences.map(c=><article key={c.id}><strong>{c.episode}</strong><div><span>♡ {c.relation}</span><span>⚡ {c.tension}</span><span>◈ {c.expression}</span></div></article>)}</div>}
+   {tallies.length?<div className="emotion-meters">{tallies.map(([name,count])=><article key={name}><div><strong>{name}</strong><span>Ressentie dans {count} parcours</span></div><div className="emotion-meter"><i style={{width:`${100*count/Math.max(...tallies.map(x=>x[1]))}%`}}/></div><p>{emotionDescriptions[name]||'Chaque ressenti mérite qu’on lui donne une place.'}</p></article>)}</div>:<div className="empty-insight"><h3>Aucune émotion déclarée pour le moment</h3><p>Au prochain choix dans une histoire, sélectionne le ressenti qui te correspond. Tu le retrouveras ici après avoir terminé une fin.</p><button className="btn btn-primary" onClick={()=>onPlay(0)}>Vivre la première histoire →</button></div>}
   </section>}
   {mode==='journal'&&<section className="insights-section"><div className="insights-section__title"><h2>Tous tes chemins, dans l’ordre</h2><p>Les choix réels de chaque parcours terminé sont conservés, même lorsque tu rejoues la même fin. Ils restent sur cet appareil.</p></div>
    {journeys.length?<><div className="insights-actions"><button className="btn btn-outline" onClick={()=>downloadJourneys(progress)}>Exporter mon journal</button><span>{journeys.length} parcours enregistrés</span></div><div className="insights-journeys">{journeys.map((j,i)=>pathCard(j,episodes,i))}</div></>:<div className="empty-insight"><h3>Ton journal commence avec ta première fin</h3><p>Choisis, observe ce qui arrive et termine l’histoire pour enregistrer les décisions dans ton parcours.</p><button className="btn btn-primary" onClick={()=>onPlay(0)}>Commencer l’histoire →</button></div>}
