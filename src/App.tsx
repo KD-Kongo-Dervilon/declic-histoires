@@ -5,7 +5,7 @@ import {estimateEmotion,newGame,nextScene,pickChoice} from './engine/story';
 import {clearGame,loadGame,saveGame} from './engine/storage';
 import {discoverEnding,endingCount,isUnlocked,loadProgress,saveProgress,emptyProgress,clearProgress} from './engine/progress';
 import type {Progress} from './engine/progress';
-import {aiConfigured,interpretFreeText} from './services/ai';
+import {interpretFreeText} from './services/ai';
 import type {StoryState} from './types';
 import {LouisImmersion} from './features/LouisImmersion';
 import {Insights,type InsightsMode,type ReaderSettings} from './features/Insights';
