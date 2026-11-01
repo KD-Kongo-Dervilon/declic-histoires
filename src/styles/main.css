@@ -307,3 +307,14 @@
  .v5-app .player--opening .choices-heading{margin:10px 0 8px!important}
  .v5-app .player--opening .story-panel{padding-top:10px!important}
 }
+
+/* Extra-small phones: keep the whole first interaction in the first screen. */
+@media(max-width:360px){
+ .v5-app .player--opening .progress-wrap{display:none!important}
+ .v5-app .player--opening .player-visual{height:90px!important}
+ .v5-app .player--opening .player-topline{margin-bottom:5px!important}
+ .v5-app .player--opening .story-panel>h1{font-size:1.57rem!important;margin:5px 0 9px!important}
+ .v5-app .player--opening .story-prose{font-size:calc(.89rem * var(--reader-scale,1))!important}
+ .v5-app .player--opening .story-prose p{line-height:1.48!important;margin-bottom:.65em!important}
+ .v5-app .player--opening .choices-heading{margin:6px 0!important}
+}
