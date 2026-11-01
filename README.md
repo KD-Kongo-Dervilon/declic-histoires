@@ -34,3 +34,9 @@ L'IA Cloudflare n'est **pas active** tant que le Worker n'est pas connecté. Les
 ## Statut éditorial
 
 Prototype fonctionnel, **pas encore un produit commercial validé** : cinq couvertures intermédiaires (à illustrer en pleine résolution) et validation pédagogique terrain nécessaire. Aucun achat Amazon ne peut être garanti sans lien officiel vérifié.
+
+## Tableau de bord premium et bibliothèque (édition novembre 2026)
+
+L'accueil associe une scène cinématographique, un catalogue de six histoires et une bibliothèque de trois ouvrages avec leurs vraies couvertures et les liens Amazon communiqués par l'autrice. La mise en page est adaptée aux ordinateurs, tablettes et mobiles. Les recommandations d'ouvrages apparaissent après le débrief, sans interrompre l'expérience de jeu.
+
+Consultez [`docs/UI_BIBLIOTHEQUE_V6.md`](docs/UI_BIBLIOTHEQUE_V6.md) pour les règles de contenu, les liens, les mécanismes de progression et le protocole de vérification.
