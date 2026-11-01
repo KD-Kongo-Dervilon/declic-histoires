@@ -1,4 +1,4 @@
-import type {Episode,NarrativeNode} from '../types';
+import type {Episode} from '../types';
 type Act = {before:string;title:string;text:string;voice:string};
 const portraits: Record<string,{morning:Act;memory:Act;stakes:Act;after:Act}>={
  'ce-qu-on-na-pas-dit':{
