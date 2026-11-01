@@ -64,7 +64,7 @@ function App(){
  function toCatalogue(){view('catalog');window.requestAnimationFrame(()=>document.getElementById('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'}))}
  function view(to:Screen){setScreen(to);setError('')}
  function openBook(id:string){const i=moneyBooks.findIndex(b=>b.id===id);if(i>=0){setBookIndex(i);setBookChoice(null);view('universe')}}
- function begin(i:number,fresh=false){if(!isUnlocked(progress,episodes,i))return;const e=episodes[i];if(fresh)clearGame(e.id);setEpisodeIndex(i);setGame(fresh?newGame(e):(loadGame(e.id)??newGame(e)));setEmotion('');setCustomText('');setAdaptive(null);view('story')}
+ function begin(i:number,fresh=false){if(!isUnlocked(progress,episodes,i))return;const e=episodes[i];if(fresh)clearGame(e.id);setEpisodeIndex(i);const stored=fresh?null:loadGame(e.id);setGame(stored&&e.nodes[stored.nodeId]?.kind!=='ending'?stored:newGame(e));setEmotion('');setCustomText('');setAdaptive(null);view('story')}
  function startAudioWithGesture(url:string){const player=ambience.current;if(!player)return;player.src=url;player.volume=volume;player.load();void player.play().then(()=>{setSoundError(false)}).catch(()=>{setSoundError(true);setAudioOn(false)})}
  function soundToggle(){setSoundError(false);if(audioOn){ambience.current?.pause();setAudioOn(false)}else{setAudioOn(true);startAudioWithGesture(audioSource==='personal'&&audioCustom?audioCustom:`/assets/${audioSource}.mp3`)}}
  function chooseAudio(id:string){setAudioSource(id);setAudioCustom(null);setAudioOn(true);startAudioWithGesture(`/assets/${id}.mp3`)}
@@ -99,7 +99,7 @@ function App(){
      <h1>Ce qu’on<br/>n’a pas dit</h1>
      <p>Léa sent que Noa s’éloigne…<br/>Et si ce n’était pas ce qu’elle croyait ?</p>
      <div className="hero-meta"><span>◷ &nbsp; {episodes[0].duration} de lecture interactive</span><span>♧ &nbsp; 9 fins possibles</span><span>♡ &nbsp; Amitié · Incompréhension · Confiance</span></div>
-     <button className="btn btn-primary hero-cta" onClick={()=>begin(0)}>▶ {progress.completed.includes(episodes[0].id)?'Continuer l’épisode':'Commencer l’épisode 01'}</button>
+     <button className="btn btn-primary hero-cta" onClick={()=>begin(0)}>▶ {progress.completed.includes(episodes[0].id)?'Rejouer l’épisode 01':'Commencer l’épisode 01'}</button>
     </div>
     <button className="feature-hero__progress" onClick={()=>view('progress')} aria-label="Voir ma progression de l’épisode 1"><strong>◎ &nbsp; Ma progression</strong><span>{endingCount(progress,episodes[0].id)} / 9 fins découvertes</span><span className="dashboard-track"><i style={{width:`${100*endingCount(progress,episodes[0].id)/9}%`}}/></span></button>
    </section>
