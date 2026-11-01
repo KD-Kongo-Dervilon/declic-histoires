@@ -64,7 +64,7 @@ function App(){
  function toCatalogue(){view('catalog');window.requestAnimationFrame(()=>document.getElementById('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'}))}
  function view(to:Screen){setScreen(to);setError('')}
  function openBook(id:string){const i=moneyBooks.findIndex(b=>b.id===id);if(i>=0){setBookIndex(i);setBookChoice(null);view('universe')}}
- function begin(i:number,fresh=false){if(!isUnlocked(progress,episodes,i))return;const e=episodes[i];if(fresh)clearGame(e.id);setEpisodeIndex(i);const stored=fresh?null:loadGame(e.id);setGame(stored&&e.nodes[stored.nodeId]?.kind!=='ending'?stored:newGame(e));setEmotion('');setCustomText('');setAdaptive(null);view('story')}
+ function begin(i:number,fresh=false){if(!isUnlocked(progress,episodes,i))return;const e=episodes[i];if(fresh)clearGame(e.id);setEpisodeIndex(i);const stored=fresh?null:loadGame(e.id);setGame(stored&&e.nodes[stored.nodeId]&&e.nodes[stored.nodeId]?.kind!=='ending'?stored:newGame(e));setEmotion('');setCustomText('');setAdaptive(null);view('story')}
  function startAudioWithGesture(url:string){const player=ambience.current;if(!player)return;player.src=url;player.volume=volume;player.load();void player.play().then(()=>{setSoundError(false)}).catch(()=>{setSoundError(true);setAudioOn(false)})}
  function soundToggle(){setSoundError(false);if(audioOn){ambience.current?.pause();setAudioOn(false)}else{setAudioOn(true);startAudioWithGesture(audioSource==='personal'&&audioCustom?audioCustom:`/assets/${audioSource}.mp3`)}}
  function chooseAudio(id:string){setAudioSource(id);setAudioCustom(null);setAudioOn(true);startAudioWithGesture(`/assets/${id}.mp3`)}
