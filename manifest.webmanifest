@@ -1,0 +1,27 @@
+{
+  "name": "DÉCLIC — Histoires à vivre",
+  "short_name": "DÉCLIC",
+  "description": "Une histoire interactive pour comprendre les émotions et les choix.",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b151b",
+  "theme_color": "#0b151b",
+  "lang": "fr",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
