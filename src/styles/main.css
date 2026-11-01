@@ -322,3 +322,22 @@
 @media(max-width:365px){.v11-book-art__visual{margin-top:9px}.v11-book-art__bottom h2{font-size:1.17rem}.v11-reading-pane{padding:16px}.v11-page-turn h1{font-size:1.75rem}.v11-decision{min-height:60px}.v11-reader-tools{margin-bottom:13px}}
 @media(prefers-reduced-motion:reduce){.v11-book-art__visual,.v11-page-turn{animation:none!important}.v11-progress-track span{transition:none}}
 .v11-reduced .v11-book-art__visual,.v11-reduced .v11-page-turn{animation:none!important}
+
+/* Compact phones: keep the first decision on-screen without hiding the scene. */
+@media(max-width:350px){
+ .v11-book-art{padding:7px 12px 6px}
+ .v11-book-art__top{display:none}
+ .v11-book-art__visual{height:100px;aspect-ratio:auto;margin-top:2px}
+ .v11-book-art__film{display:none}
+ .v11-book-art__bottom{padding:5px 0 0}
+ .v11-book-art__bottom h2{font-size:1.08rem;margin:1px 0}
+ .v11-chapter{font-size:.45rem}
+ .v11-end-count{font-size:.58rem;padding:3px 7px}
+ .v11-art-pagination{padding-top:2px}
+ .v11-reading-pane{padding:11px 14px 18px}
+ .v11-reader-tools{margin-bottom:7px}
+ .v11-page-turn h1{font-size:1.6rem;margin:7px 0 9px}
+ .v11-readable-text{line-height:1.54;font-size:.94rem}
+ .v11-decision-header{margin-top:11px;margin-bottom:7px}
+ .v11-decision{min-height:56px}
+}
