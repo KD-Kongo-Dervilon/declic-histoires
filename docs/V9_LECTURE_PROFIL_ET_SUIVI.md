@@ -10,7 +10,7 @@ Fichier : `src/content/episode01Novel.ts`. Extension déclarative du premier ép
 
 Chaque partie traverse des chapitres sur Léa et Noa (carnet partagé, fatigue et obligations familiales, publication de la photo, suppositions, décision avant la rencontre, conversation et réactions, conséquences et épilogue). La première décision ouvre trois scènes distinctes, la deuxième trois réactions suivies de scènes distinctes, la troisième neuf épilogues distincts. Le compteur demeure **9 fins**, même si les parcours possibles sont plus nombreux. Les événements ne sont pas rendus par un modèle IA générique : les effets et les dialogues sont scénarisés et vérifiables. L'IA Cloudflare reste facultative et ne doit jamais être revendiquée comme active si la liaison n'est pas configurée.
 
-La durée affichée (20–25 minutes) est une indication de lecture, non une mesure automatique.
+La durée affichée (15–20 minutes) est une indication de lecture, non une mesure automatique.
 
 ## Progression, émotions, journal et apprentissages
 
