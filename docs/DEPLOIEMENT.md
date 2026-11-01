@@ -1,5 +1,13 @@
 # Déploiement et installation
 
+## Publication actuelle
+
+- **Production** : https://declic-histoires.vercel.app/
+- **Projet** : `declic-histoires` (équipe Vercel `kdkongodervilons-projects`).
+- **Statut** : déploiement de production initial en ligne et ressources HTTP vérifiées.
+- **GitHub** : https://github.com/KD-Kongo-Dervilon/declic-histoires (branche `main`).
+- **Attention** : Vercel a été initialement déployé à partir de fichiers importés directement. Le dépôt GitHub existe, mais la liaison automatique Git→Vercel n'est pas configurée. Les `git push` ne mettront pas encore le site en ligne automatiquement.
+
 ## Publication Vercel
 
 Publier **tout le dossier à la racine du projet** (incluant les sous-dossiers `assets` et `src`). Configuration Vercel : **Other / aucun framework**, **pas de build command**, répertoire de sortie = racine. Le fichier `vercel.json` fournit les en-têtes de cache et le type du manifeste.
