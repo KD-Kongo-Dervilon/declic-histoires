@@ -1,4 +1,4 @@
-# DÉCLIC V5 — Histoires à vivre
+# DÉCLIC V6 — Histoires à vivre
 
 PWA narrative interactive accessible sur téléphone, tablette et ordinateur.
 
@@ -34,3 +34,7 @@ L'IA Cloudflare n'est **pas active** tant que le Worker n'est pas connecté. Les
 ## Statut éditorial
 
 Prototype fonctionnel, **pas encore un produit commercial validé** : cinq couvertures intermédiaires (à illustrer en pleine résolution) et validation pédagogique terrain nécessaire. Aucun achat Amazon ne peut être garanti sans lien officiel vérifié.
+
+## V6 — Bibliothèque & nouvelles scènes
+
+Refonte responsive de la page d’accueil, catalogue émotionnel à six épisodes, couvertures narratives (quelques visuels encore à perfectionner), trois liens Amazon fournis par l’autrice, couvertures réelles Louis et Où est maman ?, mini-scènes de découverte et recommandations après les fins. Voir [`docs/V6_REDESIGN.md`](docs/V6_REDESIGN.md).
