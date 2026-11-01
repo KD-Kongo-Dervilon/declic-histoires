@@ -38,3 +38,7 @@ Prototype fonctionnel, **pas encore un produit commercial validé** : cinq couve
 ## V7 — Expérience enrichie et son personnel
 
 Refonte responsive de la page d’accueil, catalogue émotionnel à six épisodes, couvertures narratives (quelques visuels encore à perfectionner), trois liens Amazon fournis par l’autrice, couvertures réelles Louis et Où est maman ?, mini-scènes de découverte et recommandations après les fins. Voir [`docs/V6_REDESIGN.md`](docs/V6_REDESIGN.md).
+
+## V9 — lecture interactive et espace lecteur
+
+Le premier épisode a été étendu en chapitres et trois décisions à conséquences visibles, tout en conservant neuf fins distinctes. L'application permet de consulter les émotions déclarées, l'historique de chaque chemin terminé, le débrief contextualisé, les fins révélées et un profil local avec réglages de lecture. Documentation : [`docs/V9_LECTURE_PROFIL_ET_SUIVI.md`](docs/V9_LECTURE_PROFIL_ET_SUIVI.md).
