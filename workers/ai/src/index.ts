@@ -4,7 +4,7 @@
 interface AIResponse { response?: string }
 interface Env { AI: {run(model:string, params:Record<string,unknown>):Promise<AIResponse>}; ALLOWED_ORIGIN:string; AI_MODEL:string }
 type Intent = 'express'|'avoid'|'ask';
-const allowedScenes = new Set(['premier-choix','intro-decision','decision-carnet','choix-maison','choix-rencontre']);
+const allowedScenes = new Set(['premier-choix','intro-decision','decision-carnet','choix-maison','choix-avant','deuxieme-exprimer','deuxieme-eviter','deuxieme-questionner','second-0','second-1','second-2']);
 const episodeContexts:Record<string,string> = {
  'ce-qu-on-na-pas-dit':'Léa parle à Noa de leur atelier partagé et d’une décision prise sans elle.',
  'le-message-de-trop':'Sami a partagé une capture d’un message privé d’Inès; Inès se sent trahie.',
