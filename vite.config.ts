@@ -4,7 +4,6 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
   plugins: [react(), VitePWA({
     registerType: 'autoUpdate',
-    includeAssets: ['assets/apple-touch-icon.png', 'assets/scene.webp', 'assets/ambience.mp3', 'assets/step.mp3'],
     manifest: {
       id: '/', name: 'DÉCLIC — Histoires à vivre', short_name: 'DÉCLIC', lang:'fr',
       description:'Des histoires interactives pour ressentir, comprendre et choisir.',
