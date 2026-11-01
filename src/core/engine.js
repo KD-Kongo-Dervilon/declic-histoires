@@ -1,8 +1,0 @@
-/* Moteur narratif indépendant du DOM : testable sans navigateur. */
-function createEngine(episode){
-  let state={screen:'home',nodeId:null,history:[],reflection:{}};
-  const node=()=>state.nodeId?episode.nodes[state.nodeId]:null;
-  const validate=()=>{for(const [id,n] of Object.entries(episode.nodes)){const targets=n.type==='choice'?n.choices.map(c=>c.next):n.next?[n.next]:[];for(const dest of targets){if(!episode.nodes[dest])throw Error(`Nœud manquant : ${id} → ${dest}`)}}};
-  validate();
-  return {getState:()=>structuredClone(state),getNode:node,start(){state={screen:'story',nodeId:episode.start,history:[],reflection:{}};return node()},choose(choiceId){const current=node();if(current?.type!=='choice')throw Error('Aucun choix disponible');const choice=current.choices.find(c=>c.id===choiceId);if(!choice)throw Error('Choix inconnu');state.history.push({nodeId:state.nodeId,choiceId,label:choice.label});state.nodeId=choice.next;return node()},next(){const current=node();if(!current?.next)throw Error('Aucune scène suivante');state.nodeId=current.next;return node()},debrief(){if(node()?.type!=='ending')throw Error('Débriefing avant la fin');state.screen='debrief'},saveReflection(key,value){if(['feeling','other','nexttime'].includes(key))state.reflection[key]=value},restart(){state={screen:'home',nodeId:null,history:[],reflection:{}}},load(saved){if(saved&&['home','story','debrief'].includes(saved.screen)&&(saved.screen==='home'?saved.nodeId===null:!!episode.nodes[saved.nodeId])&&Array.isArray(saved.history)){state={screen:saved.screen,nodeId:saved.nodeId,history:saved.history.slice(0,20),reflection:saved.reflection||{}};return true}return false}};
-}
