@@ -206,3 +206,13 @@
  .v5-app .catalog-dashboard .landing-top .feature-hero__content{padding:17px 14px!important}
  .v5-app .catalog-dashboard .feature-hero__progress{width:calc(100% - 28px);margin:10px 14px 14px}
 }
+
+/* V8 layout correction: legacy .v5-status>div rules must not size dashboard panel children */
+.v5-app .catalog-dashboard .v5-status>div{flex:none;min-height:0;padding:0}
+.v5-app .catalog-dashboard .v5-status>.v5-status__heading{display:block;flex:none}
+.v5-app .catalog-dashboard .v5-status>.v5-status__main{display:flex;flex:1;flex-direction:row;gap:14px;min-height:0}
+.v5-app .catalog-dashboard .v5-status>.v5-status__actions{display:flex;flex:none;flex-direction:row;padding-top:8px}
+@media(min-width:1180px){
+ .v5-app .catalog-dashboard .catalog-main{max-width:none;width:100%;margin:0}
+ .v5-app .catalog-dashboard .v5-status{min-height:0}
+}
