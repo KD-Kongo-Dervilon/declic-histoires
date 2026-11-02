@@ -1,6 +1,6 @@
 export type AdaptiveReply={intent:'express'|'avoid'|'ask';reply:string;perceivedEmotion:string;mode:'ai'|'offline'};
-const ENDPOINT=import.meta.env.VITE_DEClic_AI_URL as string|undefined;
-export function aiConfigured(){return Boolean(ENDPOINT&&/^https:\/\//.test(ENDPOINT))}
+const ENDPOINT=(import.meta.env.VITE_DEClic_AI_URL as string|undefined)||'/api/ai';
+export function aiConfigured(){return Boolean(ENDPOINT&&(/^(https:\/\/|\/)/.test(ENDPOINT)))}
 export async function interpretFreeText(text:string,sceneId:string,episodeId:string):Promise<AdaptiveReply>{
   const clean=text.trim().slice(0,220);
   if(!clean)throw new Error('Écris quelques mots avant de continuer.');

@@ -1,7 +1,7 @@
 import type {NarrativeNode,HistoryEntry,Impact} from '../types';
 export type StoryVariation={text:string;dialogue?:string;consequence?:string;mode:'ai'|'offline'};
-const endpoint=(import.meta.env.VITE_DEClic_AI_URL as string|undefined)?.replace(/\/$/,'');
-export function narrativeAIEnabled(){return Boolean(endpoint&&/^https:\/\//.test(endpoint))}
+const endpoint=((import.meta.env.VITE_DEClic_AI_URL as string|undefined)||'/api/ai').replace(/\/$/,'');
+export function narrativeAIEnabled(){return Boolean(endpoint&&(/^(https:\/\/|\/)/.test(endpoint)))}
 export async function narratePage(opts:{episodeId:string;node:NarrativeNode;history:HistoryEntry[];impact:Impact;signal:AbortSignal}):Promise<StoryVariation>{
  if(!narrativeAIEnabled())return {text:opts.node.text,dialogue:opts.node.dialogue,mode:'offline'};
  const controller=new AbortController();
