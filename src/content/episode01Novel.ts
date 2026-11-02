@@ -1,8 +1,7 @@
 import type {Episode,NarrativeNode,Choice} from '../types';
 
 /** Épisode 01 : continuité chronologique garantie, dialogues et conséquences vérifiables.
- * L'ordre est lundi (souvenir) → lundi soir (fatigue) → mardi matin (photo)
- * → mardi à la pause (banc) → mercredi (conséquences). */
+ * L'ordre est lundi (atelier) → lundi soir (maison) → mardi 16 h 42 (photo après la séance) → mercredi matin (banc) → conséquences. */
 const C=(id:string,title:string,words:string,next:string,intention:Choice['intention'],r:number,t:number,e:number):Choice=>({id,title,words,next,intention,impact:{relation:r,tension:t,expression:e}});
 const S=(id:string,chapter:string,title:string,text:string,next:string,opts:Partial<NarrativeNode>={}):NarrativeNode=>({id,kind:'scene',phase:chapter,eyebrow:`CHAPITRE ${chapter} · CE QU’ON N’A PAS DIT`,title,text,next,...opts});
 const D=(id:string,chapter:string,title:string,text:string,choices:Choice[]):NarrativeNode=>({id,kind:'decision',phase:chapter,eyebrow:`CHAPITRE ${chapter} · À TOI DE CHOISIR`,title,text,choices});
@@ -43,8 +42,8 @@ export function expandEpisode01(ep:Episode):Episode {
  n['soir-suite-muet']=S('soir-suite-muet','02','Le message non lu',
   'Noa attend, puis écrit : « Pas de souci si tu veux souffler. » Léa ne voit cette phrase que tard dans la soirée. Elle décide de répondre le matin, quand elle aura plus d’énergie.','mardi-photo');
  // ACTE II — Le fait observable, puis le choix du joueur : pas de conclusion hâtive.
- n['mardi-photo']=S('mardi-photo','03','Mardi, 8 h 12',
-  'Léa découvre une photo du nouvel atelier. Noa pose avec quatre élèves. Sur la table, elle reconnaît le carton de crayons qu’ils avaient préparé ensemble. Personne ne l’a prévenue de cette séance supplémentaire. Puis un message de Noa apparaît : « Tu passes au banc avant les cours ? »','choix-photo',
+ n['mardi-photo']=S('mardi-photo','03','Mardi, 16 h 42',
+  'À la sortie des cours, Léa découvre la photo de la séance supplémentaire du mardi. Noa pose avec quatre élèves. Sur la table, elle reconnaît le carton de crayons qu’ils avaient préparé ensemble. Noa a même apporté leur carnet bleu. Personne ne l’a prévenue. Son téléphone vibre : « On se parle au banc demain matin ? »','choix-photo',
   {speaker:'LÉA · PENSÉE',dialogue:'« Il y est allé sans me le dire… pourquoi ? »'});
  n['choix-photo']=D('choix-photo','03','Ton téléphone attend une réponse',
   'Léa a mal. Elle ne sait pas encore si Noa l’a remplacée ou s’il y a une autre explication. Que fais-tu ?',[
@@ -59,26 +58,35 @@ export function expandEpisode01(ep:Episode):Episode {
  n['photo-suite-ignore']=S('photo-suite-ignore','03','Un silence qui inquiète',
   'Noa envoie un deuxième message : « Tout va bien ? » Léa le laisse sans réponse. Cela lui donne quelques minutes de répit, mais Noa arrivera au banc sans comprendre son silence.','banc-arrivee');
  // Reactions to earlier choices at the *same* rendezvous.
- n['banc-arrivee']=S('banc-arrivee','04','Au banc, pendant la pause',
-  'La cour est pleine de bruit. Noa attend près du banc où ils relisent d’habitude leur carnet. Il tient une feuille de l’atelier. Léa s’arrête à deux pas. Il doit bien commencer par quelque chose.','banc-echo',
+ n['banc-arrivee']=S('banc-arrivee','04','Mercredi matin, au banc',
+  'La cour se remplit peu à peu. Noa attend près du banc où ils relisent d’habitude leur carnet. Il tient une feuille de l’atelier. Léa s’arrête à deux pas. La veille, ils ne s’étaient pas parlé depuis la photographie. Maintenant, aucun des deux ne peut faire semblant.','banc-echo',
   {nextByChoice:{'photo-direct':'echo-direct','photo-camille':'echo-camille','photo-ignore':'echo-ignore'}});
  n['banc-echo']=S('banc-echo','04','Une seconde de trop',
   'Léa respire. Le garçon devant elle est toujours son ami. Cela ne rend pas sa déception moins réelle.','choix-banc',
   {nextByChoice:{'atelier-promettre':'banc-promesse','atelier-prevenir':'banc-prevenu','atelier-esquiver':'banc-flou'}});
  n['banc-promesse']=S('banc-promesse','04','Une promesse restée en tête',
-  '« Lundi, tu m’avais dit oui pour mercredi », rappelle Noa. Léa se souvient qu’elle avait répondu trop vite. Cela explique sa confusion, mais pas pourquoi il ne l’a pas prévenue de la séance de mardi.','choix-banc');
+  '« Lundi, tu m’avais dit oui pour mercredi », rappelle Noa. Léa se souvient qu’elle avait répondu trop vite. Cela explique sa confusion, mais pas pourquoi il ne l’a pas prévenue de la séance de mardi.','banc-contexte');
  n['banc-prevenu']=S('banc-prevenu','04','Il se rappelle ton avertissement',
-  '« Tu m’avais dit que tu étais épuisée », rappelle Noa. Léa constate qu’il l’avait écoutée au moins un peu. Mais il n’avait pas vérifié si elle souhaitait manquer cette séance supplémentaire.','choix-banc');
+  '« Tu m’avais dit que tu étais épuisée », rappelle Noa. Léa constate qu’il l’avait écoutée au moins un peu. Mais il n’avait pas vérifié si elle souhaitait manquer cette séance supplémentaire.','banc-contexte');
  n['banc-flou']=S('banc-flou','04','La phrase qu’il n’avait pas comprise',
-  '« Lundi, tu m’as dit on verra. J’ai cru que tu n’étais plus motivée », explique Noa. Léa se souvient de sa réponse hésitante. Elle n’avait pas voulu renoncer au projet, mais Noa n’avait pas posé la question.','choix-banc');
+  '« Lundi, tu m’as dit on verra. J’ai cru que tu n’étais plus motivée », explique Noa. Léa se souvient de sa réponse hésitante. Elle n’avait pas voulu renoncer au projet, mais Noa n’avait pas posé la question.','banc-contexte');
  n['echo-direct']=S('echo-direct','04','Il sait que tu as des questions',
   'Noa ne sourit pas comme d’habitude. « J’ai vu ton message, dit-il. Je n’aurais pas dû te laisser découvrir la photo comme ça. » Léa remarque qu’il ne cherche pas à faire diversion.','banc-echo');
  n['echo-camille']=S('echo-camille','04','La feuille qu’il apporte',
   'Noa montre la feuille. « Le prof m’a proposé de venir mardi en renfort. Je voulais t’expliquer. » Léa repense à ce que Camille a dit. Les informations concordent, mais il reste à parler de leur promesse.','banc-echo');
  n['echo-ignore']=S('echo-ignore','04','Noa a peur de l’avoir blessée',
   '« Tu ne répondais plus, dit Noa. J’ai cru que tu m’en voulais. » Léa entend de l’inquiétude dans sa voix. Leur conversation commence moins facilement, parce que chacun a passé la matinée à imaginer ce que pensait l’autre.','banc-echo');
+ n['banc-contexte']=S('banc-contexte','04','Ce que le message de lundi a changé',
+  'Léa demande pourquoi le carnet était sur la photo. Noa n’a pas réagi de la même façon selon ce qu’elle lui avait écrit lundi soir.','choix-banc',
+  {nextByChoice:{'soir-clair':'banc-veille-clair','soir-vague':'banc-veille-vague','soir-muet':'banc-veille-muet'}});
+ n['banc-veille-clair']=S('banc-veille-clair','04','Une attention, puis un oubli',
+  '« Tu m’avais dit que tu aidais ton frère, répond Noa. J’avais pris les feuilles pour que tu ne rates rien. Le professeur m’a demandé de montrer notre dessin. J’ai dit oui sans t’en parler. » Il ouvre la pochette : il y a marqué leurs deux prénoms. Léa est soulagée qu’il ne l’ait pas effacée du projet, mais il a quand même utilisé leur travail sans demander.','choix-banc');
+ n['banc-veille-vague']=S('banc-veille-vague','04','Un malentendu qui a fait boule de neige',
+  '« Tu m’avais dit que tu avais besoin de souffler, répond Noa. J’ai cru que tu ne voulais plus participer cette semaine. Alors j’ai apporté notre carnet pour que le groupe avance. » Léa aperçoit son dessin dans la pochette. Noa a cru l’aider, mais une décision prise pour deux a été prise par un seul. Elle cherche comment le lui dire.','choix-banc');
+ n['banc-veille-muet']=S('banc-veille-muet','04','Quelqu’un d’autre a tenu le crayon',
+  '« Tu ne répondais pas, dit Noa. Le professeur avait besoin d’aide mardi. J’ai demandé à Camille de terminer la page qu’on avait commencée. » Il montre le dessin : une nouvelle fenêtre s’ouvre dans leur ville imaginaire, dessinée par quelqu’un d’autre. Léa sent la colère monter. Noa regarde la page à son tour. Il comprend soudain pourquoi ce n’était pas un détail.','choix-banc');
  n['choix-banc']=D('choix-banc','04','La conversation peut commencer',
-  'Noa explique que le professeur l’a invité à une séance de renfort. Il pensait que Léa voulait se reposer. Mais il n’a pas pris la peine de lui demander. Comment Léa lui répond-elle ?',[
+  'Le professeur avait invité Noa à une séance de renfort. Noa raconte ce qu’il a cru comprendre lundi et pourquoi il a utilisé leur carnet sans prévenir Léa. Il ne l’a peut-être pas voulu, mais sa décision l’a blessée. Que lui répond-elle ?',[
    C('banc-dire','Dire ce qui l’a blessée','« Je n’ai pas voulu arrêter notre projet. Ça m’a fait mal de l’apprendre par une photo. »','reaction-dire','express',2,-1,2),
    C('banc-cacher','Faire comme si ça allait','« Ce n’est pas grave, oublie. »','reaction-cacher','avoid',-1,1,-2),
    C('banc-demander','Lui demander comment il a compris','« Qu’est-ce qui t’a fait penser que je voulais arrêter ? »','reaction-demander','ask',2,-1,1)
