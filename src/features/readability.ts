@@ -14,18 +14,19 @@ export function bookPages(source:string,max=215):string[]{
 }
 export const SCENES=['photo','maison','souvenir','attente','approche','conversation'] as const;
 export type Shot=typeof SCENES[number];
-export function sceneShot(episodeId:string,nodeId:string,pageIndex:number):string{
+/** An illustration represents a narrative event, never a random page number.
+ * Keep the same illustration while turning pages inside one scene. */
+export function sceneShot(episodeId:string,nodeId:string,_pageIndex:number):string{
  if(episodeId!=='ce-qu-on-na-pas-dit')return '';
- let index=0;
- // The story begins at the shared art notebook, not at the later photo.
- if(/ouverture|atelier|promesse|souvenir|carnet/.test(nodeId))index=2;
- else if(/soir|maison|fatigue/.test(nodeId))index=1;
- else if(/mardi-photo|photo|camille|ignore|direct/.test(nodeId))index=0;
- else if(/banc|echo|approche/.test(nodeId))index=4;
- else if(/reaction|choix-fin|fin-/.test(nodeId))index=5;
- else if(/silence|pause|cacher/.test(nodeId))index=3;
- const alternates:Record<number,number>={0:3,1:3,2:5,3:4,4:5,5:4};
- // Within a long scene, alternate between a wide shot and a complementary close shot.
- const finalIndex=pageIndex%3===1?alternates[index]:index;
- return `/assets/lea-${SCENES[finalIndex]}.webp`;
+ const id=nodeId.toLowerCase();
+ // The illustration is chosen by the event, not by arbitrary page alternation.
+ let shot:Shot;
+ if(id==='ouverture'||id==='choix-atelier'||id.startsWith('atelier-'))shot='souvenir';
+ else if(id==='soir-maison'||id==='choix-soir'||id.startsWith('soir-'))shot='maison';
+ else if(id==='mardi-photo'||id==='choix-photo'||id.startsWith('photo-'))shot='photo';
+ else if(id==='banc-arrivee'||id==='banc-echo'||id.startsWith('banc-')||id.startsWith('echo-'))shot='approche';
+ else if(id==='choix-banc'||id.startsWith('reaction-')||id.startsWith('choix-fin-'))shot='conversation';
+ else if(id.startsWith('fin-'))shot=/attaquer|cacher|soupcon/.test(id)?'attente':/pause|plus-tard/.test(id)?'approche':'conversation';
+ else shot='souvenir';
+ return `/assets/lea-${shot}.webp`;
 }

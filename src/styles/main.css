@@ -322,7 +322,6 @@
 @media(max-width:365px){.v11-book-art__visual{margin-top:9px}.v11-book-art__bottom h2{font-size:1.17rem}.v11-reading-pane{padding:16px}.v11-page-turn h1{font-size:1.75rem}.v11-decision{min-height:60px}.v11-reader-tools{margin-bottom:13px}}
 @media(prefers-reduced-motion:reduce){.v11-book-art__visual,.v11-page-turn{animation:none!important}.v11-progress-track span{transition:none}}
 .v11-reduced .v11-book-art__visual,.v11-reduced .v11-page-turn{animation:none!important}
-
 /* Compact phones: keep the first decision on-screen without hiding the scene. */
 @media(max-width:350px){
  .v11-book-art{padding:7px 12px 6px}
@@ -341,3 +340,15 @@
  .v11-decision-header{margin-top:11px;margin-bottom:7px}
  .v11-decision{min-height:56px}
 }
+
+/* V12 — Consequences made visible without claiming fictitious AI. */
+.v12-choice-impact{margin:18px 0 8px;padding:13px 16px;border-left:3px solid #edb17a;background:linear-gradient(90deg,#e9b7861c,transparent);display:flex;flex-direction:column;gap:6px;border-radius:0 9px 9px 0}
+.v12-choice-impact span{font:700 .64rem/1.4 system-ui;letter-spacing:.13em;color:#efb980}
+.v12-choice-impact strong{font:500 .94rem/1.45 system-ui;color:#fff3e3}
+.v12-choice-impact small{font:.76rem/1.45 system-ui;color:#bac7cc}
+@media(max-width:760px){.v12-choice-impact{padding:11px 13px;margin-top:12px}.v12-choice-impact strong{font-size:.88rem}}
+/* V12 — Honest, engaging book preview, not a separate misleading game. */
+.v12-louis{max-width:860px;margin:30px auto 0;padding-top:26px}.v12-louis>h3{max-width:27ch}.v12-louis__intro{color:#bacad0;max-width:66ch;line-height:1.6}.v12-louis__reading{padding:clamp(18px,3vw,34px);border:1px solid #d8a87563;border-radius:18px;background:linear-gradient(135deg,#172a36,#0b1823)}.v12-louis__head{display:flex;justify-content:space-between;gap:10px;color:#eaba87;font:.72rem system-ui;letter-spacing:.15em}.v12-louis__reading h4{font:normal clamp(1.65rem,4vw,2.5rem)/1.15 Georgia,serif;color:#fff0e0;margin:23px 0}.v12-louis__reading>p{max-width:58ch;font:1.05rem/1.78 Georgia,serif;color:#f0e5d7}.v12-louis__reading blockquote{border-left:3px solid #e6a86b;margin:22px 0;padding:13px 17px;background:#e1ad7411;font:italic 1.1rem/1.55 Georgia,serif;color:#f5d2ad}.v12-louis__actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:23px}.v12-louis__moment{padding:14px 0}.v12-louis__moment strong{display:block;color:#f5dcb9;margin-bottom:13px}.v12-louis__options{display:flex;flex-wrap:wrap;gap:8px}.v12-louis__options button{padding:11px 14px;border:1px solid #a58c79;background:#182d3a;color:#e7e3db;border-radius:22px;cursor:pointer}.v12-louis__options button.active{background:#dca56b;color:#111d25}.v12-louis__reflection{color:#e5c8a7;font-size:.87rem;line-height:1.65}.v12-louis__disclaimer{font:normal .76rem/1.5 system-ui!important;color:#9eadb3!important;margin-top:21px}
+@media(max-width:760px){.v12-louis__reading{padding:18px}.v12-louis__reading>p{font-size:1rem;line-height:1.67}.v12-louis__actions .btn{flex:1;min-height:45px;white-space:normal}}
+
+.v12-choice-impact p{font:1rem/1.7 Georgia,serif;color:#ebdfd0;margin:0}
