@@ -17,13 +17,13 @@ export type Shot=typeof SCENES[number];
 export function sceneShot(episodeId:string,nodeId:string,pageIndex:number):string{
  if(episodeId!=='ce-qu-on-na-pas-dit')return '';
  let index=0;
- if(/maison|secret|soir|fatigue/.test(nodeId))index=1;
- else if(/souvenir|carnet|atelier/.test(nodeId))index=2;
- else if(/intro|ouverture|photo|message|decouverte/.test(nodeId))index=0;
- else if(/attente|silence|pause|cacher|plus-tard/.test(nodeId))index=3;
- else if(/rencontre|banc|approche|premier-choix|deuxieme/.test(nodeId))index=4;
- else if(/reponse|fin-|reparer|expliquer/.test(nodeId))index=5;
- else if(/chapitre/.test(nodeId))index=3;
+ // The story begins at the shared art notebook, not at the later photo.
+ if(/ouverture|atelier|promesse|souvenir|carnet/.test(nodeId))index=2;
+ else if(/soir|maison|fatigue/.test(nodeId))index=1;
+ else if(/mardi-photo|photo|camille|ignore|direct/.test(nodeId))index=0;
+ else if(/banc|echo|approche/.test(nodeId))index=4;
+ else if(/reaction|choix-fin|fin-/.test(nodeId))index=5;
+ else if(/silence|pause|cacher/.test(nodeId))index=3;
  const alternates:Record<number,number>={0:3,1:3,2:5,3:4,4:5,5:4};
  // Within a long scene, alternate between a wide shot and a complementary close shot.
  const finalIndex=pageIndex%3===1?alternates[index]:index;

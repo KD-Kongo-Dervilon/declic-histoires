@@ -1,129 +1,142 @@
 import type {Episode,NarrativeNode,Choice} from '../types';
 
-/** Livre-jeu : arc dramaturgique de Léa. Scènes distinctes et décisions sauvegardées.
- * Les neuf fins originales restent identifiables pour les anciennes sauvegardes. */
-const scene=(id:string,chapter:string,title:string,text:string,next:string,dialogue?:string):NarrativeNode=>({
- id,kind:'scene',phase:chapter,eyebrow:`CHAPITRE ${chapter} · CE QU’ON N’A PAS DIT`,title,
- speaker:dialogue?'LÉA · PENSÉE':undefined,dialogue,text,next,
-});
-const choice=(id:string,title:string,words:string,next:string,intention:Choice['intention'],r:number,t:number,e:number):Choice=>({id,title,words,next,intention,impact:{relation:r,tension:t,expression:e}});
+/** Épisode 01 : continuité chronologique garantie, dialogues et conséquences vérifiables.
+ * L'ordre est lundi (souvenir) → lundi soir (fatigue) → mardi matin (photo)
+ * → mardi à la pause (banc) → mercredi (conséquences). */
+const C=(id:string,title:string,words:string,next:string,intention:Choice['intention'],r:number,t:number,e:number):Choice=>({id,title,words,next,intention,impact:{relation:r,tension:t,expression:e}});
+const S=(id:string,chapter:string,title:string,text:string,next:string,opts:Partial<NarrativeNode>={}):NarrativeNode=>({id,kind:'scene',phase:chapter,eyebrow:`CHAPITRE ${chapter} · CE QU’ON N’A PAS DIT`,title,text,next,...opts});
+const D=(id:string,chapter:string,title:string,text:string,choices:Choice[]):NarrativeNode=>({id,kind:'decision',phase:chapter,eyebrow:`CHAPITRE ${chapter} · À TOI DE CHOISIR`,title,text,choices});
+const E=(id:string,title:string,text:string,perspective:string,takeaway:string):NarrativeNode=>({id,kind:'ending',phase:'05',eyebrow:'UNE FIN POSSIBLE',title,text,perspective,takeaway});
+
 export function expandEpisode01(ep:Episode):Episode {
  if(ep.id!=='ce-qu-on-na-pas-dit')return ep;
- const nodes:Record<string,NarrativeNode>={...ep.nodes};
- // The earlier short portraits are replaced by full chapters. Avoid dead branches.
- for(const id of Object.keys(nodes))if(id.startsWith('v7-portrait-'))delete nodes[id];
- nodes['chapitre-ouverture']=scene('chapitre-ouverture','01','Le carnet bleu, leur histoire à deux',
-  `Une heure plus tôt, Léa avait retrouvé dans son sac leur carnet bleu. Depuis la sixième, elle et Noa inventaient des histoires à deux. Ce carnet était leur promesse silencieuse : ne jamais décider de la suite sans l’autre.
-
-Ce matin, en voyant Noa sur la photo du nouvel atelier, Léa n’a pas seulement eu peur de perdre une activité. Elle a eu peur de perdre leur façon d’être amis. Elle passe son doigt sur un dessin à moitié terminé.`,
-  'decision-carnet','« Notre histoire n’était pas finie… »');
- nodes['intro-decision']={id:'intro-decision',kind:'decision',phase:'01',eyebrow:'DÈS LA PREMIÈRE MINUTE · À TOI DE CHOISIR',title:'Une photo. Et ce silence.',speaker:'LÉA',text:'8 h 12. Léa découvre Noa sur une photo de l’atelier. Ils devaient s’y inscrire ensemble. Il ne lui a rien dit. Son téléphone vibre : « Tu viens au banc ? »',choices:[
-  choice('intro-franche','Lui écrire tout de suite','« J’ai vu la photo. J’aimerais comprendre avant qu’on se voie. »','intro-suite-franche','express',1,-1,2),
-  choice('intro-camille','Chercher à comprendre autrement','Tu demandes à Camille ce qu’elle sait de l’atelier.','intro-suite-camille','ask',1,-1,1),
-  choice('intro-silence','Garder le silence','Tu ranges le téléphone. Tu n’as pas encore les mots.','intro-suite-silence','avoid',-1,1,-1)
- ]};
- nodes['intro-suite-franche']=scene('intro-suite-franche','01','Un message envoyé, pas une réponse garantie',
-  `Léa appuie sur « envoyer » avant de pouvoir changer d’avis. Elle voit aussitôt les deux petites coches. Une minute passe, puis deux. Noa répond enfin : « Je croyais que tu voulais souffler. Je t’explique au banc. » Elle est soulagée qu’il ne l’évite pas, mais la phrase la heurte : il a cru savoir à sa place.
-
-Elle prend une inspiration. Au moins, quand ils se retrouveront, il saura qu’elle a des questions.`, 'chapitre-ouverture');
- nodes['intro-suite-camille']=scene('intro-suite-camille','01','Ce que Camille a entendu',
-  `Camille la retrouve devant les casiers. « Tu sais pour le nouvel atelier ? » lui demande Léa. Camille hésite : « Je crois que Noa y va pour remplacer quelqu’un cette semaine. Mais j’ai peut-être mal compris. » Léa réalise qu’elle n’a pas seulement besoin de savoir qui participe. Elle veut savoir si sa place, à elle, existe toujours.
-
-Camille ne peut pas lui donner les intentions de Noa. Pour les connaître, Léa devra quand même lui parler.`, 'chapitre-ouverture');
- nodes['intro-suite-silence']=scene('intro-suite-silence','01','Une notification de plus',
-  `Léa glisse son téléphone dans son sac. Elle se sent protégée pendant trois minutes. Puis l’écran s’allume encore : « Tu as vu mon message ? » Noa semble attendre une réponse, tandis qu’elle se demande pourquoi elle devrait être la première à expliquer ce qui ne va pas.
-
-Le silence évite une discussion immédiate, mais il laisse Noa imaginer ce qu’elle ressent. Ils arriveront au banc avec deux questions différentes.`, 'chapitre-ouverture');
-
- nodes['decision-carnet']={id:'decision-carnet',kind:'decision',phase:'01',eyebrow:'LE CARNET BLEU · À TOI DE CHOISIR',title:'Qu’est-ce que tu fais du carnet ?',speaker:'LÉA',text:'Une page montre le début de leur histoire inachevée. Noa devait écrire la suite.',choices:[
-  choice('carnet-photo','Envoyer la page à Noa','« Tu te rappelles ce qu’on avait commencé ? »','carnet-suite-photo','express',2,-1,2),
-  choice('carnet-ouvrir','Relire leur histoire','Tu gardes cette page près de toi avant de lui parler.','carnet-suite-ouvrir','pause',1,-1,1),
-  choice('carnet-cacher','Refermer le carnet','Tu préfères ne pas penser à ce que vous risquez de perdre.','carnet-suite-cacher','avoid',-1,1,-1)
- ]};
- nodes['carnet-suite-photo']=scene('carnet-suite-photo','01','La page envoyée',`Léa photographie le dessin. Quelques secondes plus tard, Noa répond par un point d’interrogation, puis : « Tu l’as gardé ! » Elle ne sait pas si elle doit sourire. Pour lui aussi, cette histoire semble compter.`, 'souvenir');
- nodes['carnet-suite-ouvrir']=scene('carnet-suite-ouvrir','01','Ce qu’ils avaient inventé',`Léa relit leur ville imaginaire : deux portes, et aucun héros qui décide seul. Elle glisse le carnet dans sa poche avant. Elle veut pouvoir le montrer si les mots lui manquent.`, 'souvenir');
- nodes['carnet-suite-cacher']=scene('carnet-suite-cacher','01','Une couverture refermée',`Elle referme brusquement le carnet. Pendant quelques secondes, c’est plus simple de penser au prochain cours qu’à Noa. Puis elle entend un rire qui ressemble au sien dans le couloir.`, 'souvenir');
- nodes['souvenir']={...nodes['souvenir'],next:'chapitre-secret'};
- nodes['chapitre-secret']=scene('chapitre-secret','01','Ce que Léa n’avait raconté à personne',
-  `Depuis plusieurs jours, Léa dormait mal. Sa mère avait changé d’horaires et, certains soirs, c’était elle qui allait chercher son petit frère. Elle faisait les devoirs en vitesse, se couchait tard et arrivait en classe avec cette fatigue qui transforme les petites choses en montagnes. Noa lui avait demandé si elle allait bien. Elle avait répondu « oui » avec un sourire rapide, parce qu’elle ne voulait pas devenir l’amie à qui il fallait toujours demander ce qui n’allait pas.\n\nLa veille, elle lui avait écrit : « Je suis crevée. J’ai besoin d’une pause cette semaine. » Elle avait pensé à une pause dans les activités, pas dans leur amitié. Noa avait répondu avec un cœur, puis rien. Léa avait posé son téléphone, soulagée de ne pas avoir à expliquer davantage. Ils se connaissaient si bien, croyait-elle, qu’une phrase incomplète suffirait. Le matin suivant, le message paraissait tout à coup beaucoup moins clair.`,
-  'choix-maison');
- nodes['choix-maison']={id:'choix-maison',kind:'decision',phase:'01',eyebrow:'CHAPITRE 01 · LES MOTS QU’ON GARDE',title:'Ce soir-là, qu’aurais-tu fait ?',speaker:'LÉA',text:'Tu es épuisée. Noa ne sait pas tout ce qui se passe chez toi. Est-ce que tu changes quelque chose avant demain ?',choices:[
-  choice('maison-parler','Lui expliquer la fatigue','Tu lui racontes enfin les soirées où tu dois tout gérer.','maison-suite-parler','express',2,-1,2),
-  choice('maison-limite','Demander un peu de temps','« Cette semaine, je suis épuisée. On en parle mercredi ? »','maison-suite-limite','pause',1,-1,1),
-  choice('maison-garder','Tout garder pour toi','Tu te dis que ce n’est pas si grave et poses le téléphone.','maison-suite-garder','avoid',-1,1,-1)
- ]};
- nodes['maison-suite-parler']=scene('maison-suite-parler','01','Ce qu’elle a osé écrire',`Léa écrit trois phrases. Pas un roman. Elle dit qu’elle a besoin d’aide chez elle et qu’elle a peur de prendre du retard à l’atelier. Noa réagit avec un cœur et une question : « Tu veux que je garde tes dessins ? » Elle répond oui. C’est peu, mais ce message change sa manière d’aborder le silence du lendemain. Elle sait qu’il a entendu au moins une partie de son histoire.`, 'chapitre-soir');
- nodes['maison-suite-limite']=scene('maison-suite-limite','01','Une pause annoncée',`Léa envoie un message clair : elle a besoin de repos cette semaine, pas d’arrêter de créer. Noa répond « Ça marche. On en reparle mercredi. » Elle pose son téléphone avec un soulagement fragile. Il reste beaucoup à dire. Mais elle vient de distinguer une pause d’un abandon, et cette nuance lui servira lorsqu’ils se reverront.`, 'chapitre-soir');
- nodes['maison-suite-garder']=scene('maison-suite-garder','01','Les mots restés dans les brouillons',`Le message reste dans les brouillons. Léa aide son frère, surveille la casserole et referme l’ordinateur sans rien expliquer à Noa. Elle le connaît si bien qu’elle espère qu’il saura deviner sa fatigue. Le lendemain, cette attente rend la photo de l’atelier plus douloureuse encore.`, 'chapitre-soir');
- nodes['chapitre-soir']=scene('chapitre-soir','02','Le soir où Léa avait besoin d’être entendue',`À vingt heures, le salon était rempli d’odeurs de soupe et de cahiers ouverts. Son petit frère avait décidé que les divisions étaient une invention destinée à le faire souffrir. Léa lui expliqua le premier exercice, puis le deuxième. Sa mère appela pour prévenir qu’elle terminerait plus tard que prévu. « Désolée, ma chérie, tu peux surveiller la cuisson ? » Léa répondit oui. Elle avait pris l’habitude de répondre oui. C’était plus rapide que d’expliquer tout ce qu’elle avait déjà fait.
-
-Sur le frigo, une photo la montrait avec Noa au spectacle du collège. À l’époque, il avait perdu son texte au milieu d’une scène et elle avait improvisé une question pour lui donner le temps de le retrouver. Ils n’en avaient parlé à personne ; cette petite aide était restée leur secret. Léa sourit en voyant la photo, puis se sentit soudain épuisée. Elle aurait voulu appeler Noa et lui raconter cette soirée sans avoir besoin de faire semblant d’être de bonne humeur.
-
-Elle écrivit « Tu me manques un peu » dans leur conversation. Elle regarda les mots. Elle les effaça avant l’envoi. Ce n’était pas exactement ce qu’elle voulait dire : il lui manquait surtout le sentiment de pouvoir tout partager sans calculer. Elle posa le téléphone et rejoignit son frère à table. Elle ne savait pas encore que, pendant qu’elle remuait la soupe, l’atelier avançait sans elle.`, 'message');
- nodes['message']={...nodes['message'],next:'chapitre-decouverte'};
- nodes['chapitre-decouverte']=scene('chapitre-decouverte','02','Une photo qui ne devait rien changer',
-  `Sur l’écran, cinq élèves souriaient devant la porte du nouvel atelier. Noa était au milieu. Il tenait un carton rempli de matériel que Léa avait aidé à préparer une semaine plus tôt. La légende disait simplement : « Première séance, on est lancés ! »\n\nLéa agrandit la photo. Elle observa d’abord les autres, puis le sourire de Noa, puis le carton. Elle remarqua que personne ne semblait penser à elle. Elle se demanda quand la décision avait été prise : hier, pendant qu’elle rangeait la cuisine ? Ce matin, pendant le cours de technologie ? Ou bien depuis longtemps, sans qu’elle le sache ?\n\nSa première réaction fut de chercher son prénom dans les commentaires. Elle le fit deux fois. Personne ne le mentionnait. Une camarade lui demanda si elle avait trouvé la réponse à l’exercice de français. Léa répondit mécaniquement. Son téléphone resta dans sa main longtemps après que l’écran s’était éteint. Elle n’était pas seulement vexée de manquer un atelier. Elle avait l’impression de découvrir que l’amitié qu’elle croyait partagée ne racontait peut-être pas la même histoire pour Noa.`,
-  'chapitre-premier-doute');
- nodes['chapitre-premier-doute']=scene('chapitre-premier-doute','02','Le piège des suppositions',
-  `Dans le couloir, elle croisa Camille, qui lui demanda : « Tu viens toujours le mercredi ? » Léa répondit qu’elle ne savait pas. Camille, pressée de rejoindre son groupe, ne posa pas d’autre question. Cette réponse banale se transforma immédiatement dans la tête de Léa en une preuve supplémentaire : tout le monde savait, sauf elle.\n\nÀ l’heure du déjeuner, elle ouvrit leur conversation. Le dernier message datait de la veille. Une envie lui traversa l’esprit : lui écrire tout ce qu’elle ressentait d’un seul coup, sans ponctuation, et jeter son téléphone avant qu’il puisse répondre. Une autre envie fut plus forte encore : ne rien écrire du tout, pour voir s’il remarquerait son absence. Léa connaissait cette manière de se protéger. Elle l’avait déjà utilisée quand elle avait peur de demander quelque chose et de découvrir qu’on ne voulait pas le lui donner.\n\nSon doigt resta au-dessus du clavier. À ce moment-là, elle pouvait encore décider de ce que serait leur première conversation.`,
-  'chapitre-cantine');
- nodes['chapitre-cantine']=scene('chapitre-cantine','02','À la cantine, au milieu des conversations',`La file avançait lentement. Léa suivait Camille sans presque écouter ce qu’elle racontait. Au bout du couloir, le bruit d’une classe qui sortait de sport couvrit une phrase : « Noa a déjà trouvé une équipe. » Elle sentit ses épaules se crisper. La veille, il lui avait pourtant demandé si elle avait terminé leur dernier dessin. Comment les deux choses pouvaient-elles être vraies en même temps ?
-
-Camille posa son plateau près d’elle. « Ça va ? Tu n’as presque rien mangé. » Léa voulut répondre qu’elle avait simplement faim plus tard. À la place, elle demanda : « Tu trouves que je prends trop de place, parfois ? » Camille la regarda comme si la question venait d’un autre monde. « Quoi ? Pourquoi tu me demandes ça ? » Léa haussa les épaules. Elle ne savait pas comment expliquer l’impression d’être devenue facultative dans la vie de quelqu’un.
-
-Camille ne lui donna pas de grande leçon. Elle resta quelques minutes à côté d’elle, en lui racontant la fois où son cousin avait oublié de l’inviter à son anniversaire. « J’étais sûre qu’il ne voulait plus de moi. En fait, il avait perdu mon numéro. Ça n’a pas empêché que j’aie mal. » Léa se mit à rire malgré elle. Le problème n’était donc pas toujours de choisir entre « il m’a blessée » et « il avait une raison ». Les deux pouvaient être vrais. Elle ramassa son téléphone. Une conversation attendait toujours de commencer.`, 'choix-avant');
- nodes['choix-avant']={id:'choix-avant',kind:'decision',phase:'02',eyebrow:'CHAPITRE 02 · UNE DÉCISION QUI COMPTE',title:'Avant de le retrouver, que fais-tu ?',speaker:'LÉA',text:'Personne ne t’observe. Ta réaction maintenant déterminera ce que tu sauras — ou ce que tu continueras à imaginer — avant de lui parler.',choices:[
-  choice('observer','Chercher les faits avant de conclure','Tu relis les messages et notes ce que tu sais réellement.', 'avant-observer','ask',1,-1,1),
-  choice('ecrire','Lui envoyer un message immédiat','« Pourquoi tu as décidé ça sans moi ? »', 'avant-ecrire','express',0,2,2),
-  choice('attendre','Garder le téléphone dans ta poche','Tu décides d’attendre qu’il vienne de lui-même.', 'avant-attendre','avoid',-1,0,-1),
- ]};
- nodes['avant-observer']=scene('avant-observer','03','Ce que tu sais. Et ce que tu imagines.',
-  `Léa ouvre les anciens messages. Elle retrouve une invitation envoyée par Noa trois jours plus tôt : « Tu veux toujours qu’on se voie mercredi ? » Elle avait répondu : « Cette semaine, je ne vais pas y arriver. » Elle comprend soudain pourquoi il a pu penser qu’elle renonçait à la séance. Pourtant, elle remarque aussi qu’il ne lui a jamais demandé si elle voulait arrêter le projet.\n\nElle sort le carnet bleu et trace deux colonnes. Dans la première, elle écrit : « Il s’est inscrit sans m’en parler. » Dans la seconde : « Il ne veut plus être mon ami. » Les mots n’ont pas le même poids. Le premier est un fait ; le second, une peur. Cette distinction ne supprime pas sa déception, mais elle lui rend un peu de liberté. Elle pourra demander une explication au lieu de seulement défendre sa place.`,
-  'attente','« Il y a ce que j’ai vu… et ce que je suppose. »');
- nodes['avant-ecrire']=scene('avant-ecrire','03','Un message qu’on ne peut pas rattraper',
-  `Léa appuie sur « envoyer ». Les deux coches apparaissent presque aussitôt, mais pas de réponse. Elle pose son téléphone face contre table. Puis elle le retourne. Noa est en train d’écrire. Il s’arrête. Il recommence. Enfin, un message arrive : « Je voulais pas te blesser. On peut en parler à la pause ? »\n\nLéa relit son propre message. À la première lecture, il lui avait semblé très juste. Maintenant elle remarque qu’il ne dit rien de sa tristesse, seulement une accusation. Elle est soulagée que Noa propose de discuter, mais déjà inquiète de ce qu’il va penser d’elle. Elle ne peut plus effacer ce qu’il a lu. Elle peut encore choisir la suite de leur conversation.`,
-  'attente','« J’ai dit ce que j’avais sur le cœur… ou seulement ma colère ? »');
- nodes['avant-attendre']=scene('avant-attendre','03','Les minutes deviennent plus longues',
-  `Léa verrouille l’écran et le glisse au fond de son sac. Elle se promet de ne pas le consulter avant la fin de la pause. Le bruit de la cour devient très fort : les ballons rebondissent, les conversations s’entremêlent, quelqu’un rit derrière elle. Elle se sent seule au milieu des autres.\n\nDix minutes plus tard, Noa apparaît au bout du couloir. Il regarde autour de lui et finit par l’apercevoir. Léa détourne les yeux si vite qu’elle se demande s’il l’a remarqué. Elle espère qu’il viendra la chercher. Elle déteste en même temps avoir besoin qu’il le fasse. Elle comprend que son silence, aussi protecteur soit-il, laisse Noa deviner ce qu’elle ressent. Et il n’a peut-être aucune chance de deviner juste.`,
-  'attente','« S’il tient à moi, il viendra… n’est-ce pas ? »');
- nodes['attente']={...nodes['attente'],next:'chapitre-rencontre'};
- nodes['chapitre-rencontre']=scene('chapitre-rencontre','03','Le banc qui connaît leurs silences',
-  `Noa s’assoit à l’autre bout du banc, exactement à la place où il s’asseyait d’habitude. Pendant un instant, les mêmes gestes reviennent : il pose son sac par terre, repousse une mèche de cheveux, sort son carnet. Cette familiarité fait presque plus mal que la photo. Léa voudrait retrouver leur mercredi d’avant. Elle voudrait aussi qu’il comprenne qu’on ne peut pas simplement revenir à la normale.\n\n« Tu as vu l’inscription ? » demande-t-il. Elle acquiesce. Noa essaie de sourire, puis son visage change lorsqu’il remarque ses yeux rouges. « J’ai fait quelque chose de travers ? » Sa question semble sincère, mais elle lui fait l’effet d’une dernière goutte. Il ne comprend donc vraiment pas.\n\nLéa sent les mots se bousculer. Il y a la blessure, la fatigue, la peur d’être remplacée, et une chose qu’elle n’ose pas reconnaître : elle voudrait aussi entendre qu’il a pensé à elle.`,
-  'chapitre-quelques-secondes');
- nodes['echo-carnet-photo']=scene('echo-carnet-photo','03','Une photo que Noa n’a pas oubliée',`Noa fait glisser son téléphone sur le banc. La page bleue apparaît à l’écran. « J’avais oublié cette partie », murmure-t-il. Léa comprend que son message de ce matin l’a déjà amené à repenser à leur projet.`, 'premier-choix');
- nodes['echo-carnet-ouvrir']=scene('echo-carnet-ouvrir','03','Le carnet sur le banc',`Léa ouvre le carnet à la page de leur ville. Noa se penche : « On n’avait jamais terminé la dernière scène. » Il attend qu’elle lui dise si elle veut encore écrire la suite avec lui.`, 'premier-choix');
- nodes['echo-carnet-cacher']=scene('echo-carnet-cacher','03','Un objet trop lourd',`Le carnet est resté dans le sac. Noa pose la question : « Tu es toujours à l’atelier, toi aussi ? » Léa baisse les yeux. Aucun des deux ne sait que l’autre pense à leur vieux projet.`, 'premier-choix');
- nodes['chapitre-rencontre']={...nodes['chapitre-rencontre'],nextByChoice:{'intro-franche':'retour-franche','intro-camille':'retour-camille','intro-silence':'retour-silence'}};
- nodes['retour-franche']=scene('retour-franche','03','Il avait préparé sa réponse',`Noa est déjà sur le banc. Quand Léa s’approche, il ne commence pas par parler du cours ou du temps qu’il fait. « J’ai lu ce que tu m’as écrit. Je suis désolé de ne pas t’avoir demandé. » Léa sent sa colère retomber légèrement, sans disparaître. Son message du matin a changé la conversation : Noa sait enfin de quoi elle veut parler. Mais lui faire comprendre le reste ne sera pas automatique.`, 'chapitre-quelques-secondes');
- nodes['retour-camille']=scene('retour-camille','03','Un mot qu’elle n’était pas censée connaître',`Noa ouvre la bouche pour parler de l’atelier, mais Léa demande : « C’est vrai que tu remplaces quelqu’un ? » Il paraît surpris. « Qui t’a dit ça ? » La discussion commence par l’information rapportée par Camille. Léa réalise que demander autour d’elle lui a donné une piste, mais aussi un malentendu de plus à dénouer. Elle doit maintenant séparer ce qu’elle sait de ce qu’elle imagine.`, 'chapitre-quelques-secondes');
- nodes['retour-silence']=scene('retour-silence','03','Il pense qu’elle veut l’éviter',`Noa reste debout devant le banc. « Tu as vu mes messages ? » demande-t-il avant de s’asseoir. Léa hoche la tête. « Je savais pas si tu voulais me parler. » Le silence de ce matin a changé son attitude. Il marche prudemment, comme si chaque mot risquait d’aggraver quelque chose. Léa voudrait qu’il comprenne sans avoir à tout expliquer. Elle découvre que cette attente les met tous les deux dans l’incertitude.`, 'chapitre-quelques-secondes');
-  nodes['chapitre-quelques-secondes']=scene('chapitre-quelques-secondes','03','Les quelques secondes qui décident du ton',`Un ballon frappe le grillage derrière le banc. Les deux amis sursautent, puis rient presque en même temps. Ce rire leur ressemble tellement que Léa en a les larmes aux yeux. Elle regarde Noa. Il n’a pas l’air d’un garçon qui vient de rompre une amitié. Il a l’air fatigué lui aussi, avec cette façon de serrer les mains quand il ne sait pas comment commencer.
-
-« J’ai voulu te laisser souffler », dit-il enfin. Léa sent la colère revenir. Comment a-t-il pu décider seul de ce dont elle avait besoin ? Elle repense à son frère, à la soupe, à tous les petits oui prononcés dans la journée. Elle ne veut pas qu’une autre personne choisisse à sa place, même pour la protéger. En même temps, elle se rappelle toutes les fois où Noa a été celui qui attendait devant une salle quand elle avait besoin de courage. Ce passé ne donne pas tort à sa blessure. Il l’empêche seulement de réduire Noa à cette photo.
-
-Autour d’eux, la cour se vide peu à peu. Léa a plusieurs phrases sur la langue. Aucune n'est parfaite. Et ce qui arrivera après dépendra moins d'un mot magique que de ce qu'ils choisiront d'écouter, ou de ne pas entendre.`, 'premier-choix');
- nodes['chapitre-quelques-secondes']={...nodes['chapitre-quelques-secondes'],nextByChoice:{'carnet-photo':'echo-carnet-photo','carnet-ouvrir':'echo-carnet-ouvrir','carnet-cacher':'echo-carnet-cacher'}};
- const paths:[string,string,string,string][]=[
-  ['reponse-exprimer','chapitre-dire','Ce que Noa n’avait jamais entendu',`« Ça m’a blessée », a dit Léa. Le mot reste entre eux, plus précis que toutes les accusations qu’elle avait préparées. Noa laisse son carnet fermé. Il ne cherche plus à lui expliquer pourquoi sa décision était logique. Il demande : « Tu as cru que je ne voulais plus travailler avec toi ? » Léa hoche la tête. C’est la première fois qu’elle entend sa propre peur à voix haute.\n\nNoa regarde vers l’atelier. Il explique qu’un professeur lui a proposé de rejoindre la séance provisoirement pendant que Léa était fatiguée. Il a accepté sans vérifier ce qu’elle voulait vraiment. Il croyait lui rendre service en ne la sollicitant pas. Léa écoute, mais n’a pas encore envie de lui dire qu’elle comprend. Elle veut d’abord qu’il entende ce que cela lui a fait. Leur conversation peut maintenant aller vers une réparation ou vers une nouvelle blessure.`],
-  ['reponse-eviter','chapitre-mentir','Ce sourire qui sonne faux',`Léa affirme que ce n’est pas grave. Elle sourit comme elle le fait devant les adultes lorsqu’elle n’a pas envie de les inquiéter. Noa la connaît suffisamment pour percevoir le décalage. « Tu peux m’en vouloir, tu sais », dit-il doucement. Elle hausse les épaules.\n\nPendant quelques secondes, ils parlent de la cantine, puis du devoir de français. Leurs phrases sont polies, presque étrangères. Noa joue avec un stylo qu’elle lui avait offert. Léa se surprend à regarder ce stylo davantage que son visage. Ce n’est pas seulement le projet qu’elle risque de perdre ; c’est leur facilité à être ensemble. Elle comprend qu’en prétendant ne rien ressentir, elle oblige Noa à prendre toutes les décisions avec une information incomplète. Elle peut encore dire la vérité, ou choisir de la garder pour elle.`],
-  ['reponse-questionner','chapitre-comprendre','Deux versions du même mercredi',`Noa explique qu’il a interprété son message comme une pause de plusieurs semaines. Il montre sa propre conversation avec le professeur : « Je peux rejoindre temporairement le groupe ? Mon binôme ne peut pas venir. » Léa découvre ce petit mot, « temporairement », qu’elle n’avait jamais vu.\n\nElle n’a pas envie de reconnaître tout de suite qu’elle avait imaginé autre chose. Il ne l’a pas prévenue, après tout. Mais une certitude s’effrite : Noa n’a pas forcément choisi quelqu’un à sa place. Il a peut-être seulement essayé d’avancer sans elle, maladroitement. Noa ajoute qu’il avait peur de la fatiguer en lui proposant une nouvelle échéance. Cette phrase la touche et l’agace à la fois. Pourquoi personne ne lui a demandé ce qu’elle préférait ? La suite dépend maintenant de la manière dont elle accueille cette explication.`]
- ];
- for(const [source,id,title,text] of paths){const original=nodes[source];nodes[source]={...original,next:id};nodes[id]=scene(id,'04',title,text,original.next!);}
- const endingChapters:[string,string,string][]=[
-  ['fin-clarifier','Une place pour chacun',`Ils s’asseyent plus près l’un de l’autre. Noa propose d’ouvrir le carnet bleu. Léa n’est pas prête à faire comme si la semaine passée n’existait pas. Elle lui raconte le soir où elle a vu la photographie et la honte de se sentir de trop. Il écoute sans regarder son téléphone.\n\nLe mercredi suivant, ils se retrouvent devant l’atelier. Noa attend que Léa lui dise si elle souhaite participer. Elle n’a pas encore tout pardonné, mais pour la première fois depuis plusieurs jours, la question lui appartient. Cette fois, ils prennent une décision ensemble.`],
-  ['fin-attaquer','Ce qu’on regrette dans le couloir',`Les mots de Léa sont partis trop vite. Noa se redresse : « Tu sais très bien que ce n’est pas vrai. » Il ramasse son sac. Léa voudrait le retenir, mais elle pense encore aux messages restés sans réponse. Ils se quittent de chaque côté du préau.\n\nLe soir, Léa retrouve la page de leur carnet sur laquelle ils avaient dessiné une rue déserte. Elle repense à son accusation. Elle avait le droit d’être en colère ; elle se demande seulement si elle a raconté ce qui s’était passé ou ce qu’elle craignait. Le conflit n’est pas réglé. Elle peut choisir de revenir vers lui demain, sans effacer sa peine.`],
-  ['fin-pause','Demain, sans se forcer',`Léa quitte le banc et traverse la cour. Derrière elle, Noa ne la suit pas. Il lui a laissé ce qu’elle a demandé : du temps. Sur le trajet du retour, elle se demande si elle aurait dû parler davantage. Puis elle remarque que son cœur bat moins vite.\n\nÀ dix-neuf heures, un message arrive : « Demain, si tu veux. » Elle ne répond pas immédiatement. Elle prépare son sac, termine ses devoirs, puis écrit : « Oui. Après les cours. » Ce n’est pas une réconciliation. C’est un rendez-vous que tous les deux ont choisi.`],
-  ['fin-oser','Revenir sur son premier mot',`Léa retire son sourire forcé. « En fait, ce n’est pas rien », dit-elle. Noa ne répond pas tout de suite. Il s’assoit et pose son téléphone sur le banc, écran contre le bois. Ce geste simple lui montre qu’il restera pour écouter.\n\nElle explique à quel point leur carnet comptait. Il lui dit que, depuis son absence, les séances lui ont semblé moins drôles. Elle ne sait pas si cela suffit. Mais quand la sonnerie retentit, ils repartent ensemble, plus lentement que d’habitude, comme s’ils réapprenaient à marcher au même rythme.`],
-  ['fin-cacher','Le carnet refermé',`Léa répète que tout va bien. Noa acquiesce, mais ses yeux restent inquiets. Ils se séparent en promettant vaguement de s’écrire. Personne n’envoie le premier message.\n\nLe mercredi suivant, Léa passe devant l’atelier sans entrer. De l’autre côté de la porte, elle entend des voix et le bruit des feuilles qu’on déplace. Elle sait qu’elle aurait le droit d’ouvrir. Elle n’en a pas la force. Le silence a protégé ses émotions pendant quelques minutes ; il commence maintenant à décider à sa place.`],
-  ['fin-plus-tard','La conversation qu’on prépare',`Léa écrit le soir ce qu’elle veut vraiment lui dire : « Je ne veux pas que tu abandonnes l’atelier. Je veux simplement être consultée quand il s’agit de nous deux. » Elle relit la phrase, barre deux mots, puis la garde.\n\nLe lendemain, Noa l’attend à l’endroit prévu. Il a apporté le carnet bleu. Cette fois, ils arrivent à la conversation sans avoir besoin de défendre leur place devant les autres. La blessure n’a pas disparu, mais elle n’est plus enfermée dans un silence.`],
-  ['fin-curiosite','Une question qui ouvre une autre porte',`Léa demande pourquoi Noa a pensé qu’elle voulait abandonner. Il lui montre son ancien message. Ils le lisent ensemble. Elle découvre combien une même phrase peut porter deux sens différents.\n\n« Tu aurais pu me demander », dit-elle. « Oui », répond-il. Il propose de lui montrer le travail du nouveau groupe et de décider ensemble si leur projet commun peut y trouver sa place. Léa accepte de regarder, sans promettre davantage. Pour la première fois, elle a envie de savoir plutôt que de deviner.`],
-  ['fin-soupcon','La preuve qu’on ne peut pas donner',`Noa essaie de montrer les échanges avec le professeur. Léa trouve une nouvelle raison de douter. Chaque explication semble ouvrir une autre question. Finalement il ferme son téléphone : « Je ne sais plus quoi te dire. »\n\nElle aimerait lui demander une preuve qu’il ne la remplacera jamais. Elle comprend que cette preuve n’existe pas. Le soir, elle décide de noter ce dont elle aura besoin pour continuer à lui faire confiance : des décisions partagées, des messages clairs, du temps. Si une réparation est possible, elle passera par des actes observables, pas par une promesse impossible.`],
-  ['fin-reparer','Une nouvelle page dans le carnet',`Noa sort le carnet bleu. Il tourne les pages jusqu’au dessin d’une ville suspendue dans les arbres. « On avait laissé cette histoire là », dit-il. Léa acquiesce. Il n’ose pas lui tendre immédiatement le crayon.\n\nIls conviennent d’une règle simple : avant d’inscrire l’autre à quelque chose, ils demanderont. Et si l’un a besoin d’une pause, il le dira clairement. La semaine suivante, ils dessinent une nouvelle porte à l’entrée de leur ville imaginaire. Léa sourit en voyant Noa écrire en dessous : « On entre à deux, quand on veut. »`]
- ];
- for(const [finish,title,text] of endingChapters){const extra=`chapitre-${finish}`;for(const node of Object.values(nodes)){
-  if(node.kind==='decision'&&node.choices?.some(c=>c.next===finish))node.choices=node.choices.map(c=>c.next===finish?{...c,next:extra}:c);
- }
- nodes[extra]=scene(extra,'05',title,text,finish);
- }
- return {...ep,age:'12–18 ans',duration:'15–20 minutes',start:'intro-decision',nodes};
+ const n:Record<string,NarrativeNode>={};
+ // ACTE I — Ce que cette amitié signifie, avant l'incident.
+ n['ouverture']=S('ouverture','01','Le lundi où tout allait encore bien',
+  'Léa et Noa sont amis depuis trois ans. Chaque lundi, ils se retrouvent à l’atelier de dessin du collège. Ils inventent ensemble une ville imaginaire dans un carnet bleu. Aujourd’hui, Noa a écrit sur la dernière page : « Mercredi, on imagine la suite ? »','choix-atelier',
+  {speaker:'NOA',dialogue:'« Cette fois, on construit la grande bibliothèque de notre ville. Tu viens mercredi ? »'});
+ n['choix-atelier']=D('choix-atelier','01','Tu lui réponds quoi ?',
+  'Léa aimerait venir. Mais elle sait déjà que la semaine sera difficile chez elle.',[
+   C('atelier-promettre','Promettre de venir','« Bien sûr ! On finit notre ville mercredi. »','atelier-suite-promettre','express',1,0,1),
+   C('atelier-prevenir','Prévenir qu’elle est épuisée','« Je vais essayer, mais j’ai beaucoup à faire chez moi. »','atelier-suite-prevenir','ask',1,-1,2),
+   C('atelier-esquiver','Éviter de s’engager','« On verra. »','atelier-suite-esquiver','avoid',-1,1,-1)
+  ]);
+ n['atelier-suite-promettre']=S('atelier-suite-promettre','01','Une promesse trop rapide',
+  'Noa sourit et dessine une petite étoile à côté de mercredi. Léa sourit aussi. Elle n’a pas menti : elle veut vraiment être là. Elle n’a simplement pas encore vérifié si elle le pourra.','soir-maison');
+ n['atelier-suite-prevenir']=S('atelier-suite-prevenir','01','Une phrase qu’il entend à moitié',
+  'Noa relève les yeux. « Tu me diras », répond-il. Il paraît détendu, comme si rien ne pouvait menacer leur rituel. Léa aimerait être aussi sûre que lui.','soir-maison');
+ n['atelier-suite-esquiver']=S('atelier-suite-esquiver','01','La réponse qui reste en suspens',
+  '« On verra », répète Noa. Il ferme le carnet sans insister. Léa remarque qu’il est un peu déçu, mais la sonnerie retentit avant qu’elle trouve quoi ajouter.','soir-maison');
+ n['soir-maison']=S('soir-maison','02','Le lundi soir, à la maison',
+  'À 19 h 40, Léa aide son petit frère à finir ses devoirs. Leur mère termine tard. La soupe chauffe et ses propres exercices attendent encore. Le téléphone s’allume : Noa demande si elle sera là mercredi.','choix-soir',
+  {speaker:'PETIT FRÈRE',dialogue:'« Léa, tu peux m’aider encore une minute ? »'});
+ n['choix-soir']=D('choix-soir','02','Léa aimerait être comprise',
+  'Elle a envie de dire qu’elle est fatiguée. Mais parler de sa journée lui semble presque aussi difficile que la terminer.',[
+   C('soir-clair','Expliquer ce qui se passe','« J’aimerais venir, mais je garde mon frère le soir. Je suis épuisée. »','soir-suite-clair','express',2,-1,2),
+   C('soir-vague','Répondre sans expliquer','« Je suis crevée cette semaine. J’ai besoin de souffler. »','soir-suite-vague','pause',0,1,0),
+   C('soir-muet','Attendre pour répondre','Tu poses le téléphone et retournes aider ton frère.','soir-suite-muet','avoid',-1,1,-1)
+  ]);
+ n['soir-suite-clair']=S('soir-suite-clair','02','Il propose son aide',
+  'Noa répond : « Je peux te garder les feuilles de l’atelier, et on se voit quand tu peux. » Léa se sent un peu moins seule. Elle ne sait pas encore qu’une inscription aura lieu le lendemain.','mardi-photo');
+ n['soir-suite-vague']=S('soir-suite-vague','02','Un cœur qui ne répond pas à tout',
+  'Noa répond avec un cœur, puis : « D’accord, repose-toi. » Léa pense qu’il a compris qu’elle veut juste faire une pause. De son côté, Noa pense qu’elle ne souhaite pas venir cette semaine.','mardi-photo');
+ n['soir-suite-muet']=S('soir-suite-muet','02','Le message non lu',
+  'Noa attend, puis écrit : « Pas de souci si tu veux souffler. » Léa ne voit cette phrase que tard dans la soirée. Elle décide de répondre le matin, quand elle aura plus d’énergie.','mardi-photo');
+ // ACTE II — Le fait observable, puis le choix du joueur : pas de conclusion hâtive.
+ n['mardi-photo']=S('mardi-photo','03','Mardi, 8 h 12',
+  'Léa découvre une photo du nouvel atelier. Noa pose avec quatre élèves. Sur la table, elle reconnaît le carton de crayons qu’ils avaient préparé ensemble. Personne ne l’a prévenue de cette séance supplémentaire. Puis un message de Noa apparaît : « Tu passes au banc avant les cours ? »','choix-photo',
+  {speaker:'LÉA · PENSÉE',dialogue:'« Il y est allé sans me le dire… pourquoi ? »'});
+ n['choix-photo']=D('choix-photo','03','Ton téléphone attend une réponse',
+  'Léa a mal. Elle ne sait pas encore si Noa l’a remplacée ou s’il y a une autre explication. Que fais-tu ?',[
+   C('photo-direct','Demander directement à Noa','« J’ai vu la photo. Je suis surprise. On peut en parler au banc ? »','photo-suite-direct','express',2,-1,2),
+   C('photo-camille','Demander à Camille','Tu veux savoir de quoi il s’agit avant de voir Noa.','photo-suite-camille','ask',0,0,1),
+   C('photo-ignore','Ne pas répondre','Tu ranges ton téléphone et files en cours.','photo-suite-ignore','avoid',-1,2,-1)
+  ]);
+ n['photo-suite-direct']=S('photo-suite-direct','03','La réponse de Noa',
+  'Noa répond aussitôt : « Oui. Je voulais justement te raconter. » Léa n’a pas la réponse, mais elle sait désormais qu’il accepte la conversation. Elle attend la pause avec un nœud dans le ventre.','banc-arrivee');
+ n['photo-suite-camille']=S('photo-suite-camille','03','Ce que Camille sait vraiment',
+  'Camille explique : « Le professeur a ajouté une séance mardi. Noa était libre, alors il a aidé. Je ne sais pas pourquoi il ne t’a pas écrit. » Léa comprend qu’elle a un fait, mais toujours pas ses intentions.','banc-arrivee');
+ n['photo-suite-ignore']=S('photo-suite-ignore','03','Un silence qui inquiète',
+  'Noa envoie un deuxième message : « Tout va bien ? » Léa le laisse sans réponse. Cela lui donne quelques minutes de répit, mais Noa arrivera au banc sans comprendre son silence.','banc-arrivee');
+ // Reactions to earlier choices at the *same* rendezvous.
+ n['banc-arrivee']=S('banc-arrivee','04','Au banc, pendant la pause',
+  'La cour est pleine de bruit. Noa attend près du banc où ils relisent d’habitude leur carnet. Il tient une feuille de l’atelier. Léa s’arrête à deux pas. Il doit bien commencer par quelque chose.','banc-echo',
+  {nextByChoice:{'photo-direct':'echo-direct','photo-camille':'echo-camille','photo-ignore':'echo-ignore'}});
+ n['banc-echo']=S('banc-echo','04','Une seconde de trop',
+  'Léa respire. Le garçon devant elle est toujours son ami. Cela ne rend pas sa déception moins réelle.','choix-banc',
+  {nextByChoice:{'atelier-promettre':'banc-promesse','atelier-prevenir':'banc-prevenu','atelier-esquiver':'banc-flou'}});
+ n['banc-promesse']=S('banc-promesse','04','Une promesse restée en tête',
+  '« Lundi, tu m’avais dit oui pour mercredi », rappelle Noa. Léa se souvient qu’elle avait répondu trop vite. Cela explique sa confusion, mais pas pourquoi il ne l’a pas prévenue de la séance de mardi.','choix-banc');
+ n['banc-prevenu']=S('banc-prevenu','04','Il se rappelle ton avertissement',
+  '« Tu m’avais dit que tu étais épuisée », rappelle Noa. Léa constate qu’il l’avait écoutée au moins un peu. Mais il n’avait pas vérifié si elle souhaitait manquer cette séance supplémentaire.','choix-banc');
+ n['banc-flou']=S('banc-flou','04','La phrase qu’il n’avait pas comprise',
+  '« Lundi, tu m’as dit on verra. J’ai cru que tu n’étais plus motivée », explique Noa. Léa se souvient de sa réponse hésitante. Elle n’avait pas voulu renoncer au projet, mais Noa n’avait pas posé la question.','choix-banc');
+ n['echo-direct']=S('echo-direct','04','Il sait que tu as des questions',
+  'Noa ne sourit pas comme d’habitude. « J’ai vu ton message, dit-il. Je n’aurais pas dû te laisser découvrir la photo comme ça. » Léa remarque qu’il ne cherche pas à faire diversion.','banc-echo');
+ n['echo-camille']=S('echo-camille','04','La feuille qu’il apporte',
+  'Noa montre la feuille. « Le prof m’a proposé de venir mardi en renfort. Je voulais t’expliquer. » Léa repense à ce que Camille a dit. Les informations concordent, mais il reste à parler de leur promesse.','banc-echo');
+ n['echo-ignore']=S('echo-ignore','04','Noa a peur de l’avoir blessée',
+  '« Tu ne répondais plus, dit Noa. J’ai cru que tu m’en voulais. » Léa entend de l’inquiétude dans sa voix. Leur conversation commence moins facilement, parce que chacun a passé la matinée à imaginer ce que pensait l’autre.','banc-echo');
+ n['choix-banc']=D('choix-banc','04','La conversation peut commencer',
+  'Noa explique que le professeur l’a invité à une séance de renfort. Il pensait que Léa voulait se reposer. Mais il n’a pas pris la peine de lui demander. Comment Léa lui répond-elle ?',[
+   C('banc-dire','Dire ce qui l’a blessée','« Je n’ai pas voulu arrêter notre projet. Ça m’a fait mal de l’apprendre par une photo. »','reaction-dire','express',2,-1,2),
+   C('banc-cacher','Faire comme si ça allait','« Ce n’est pas grave, oublie. »','reaction-cacher','avoid',-1,1,-2),
+   C('banc-demander','Lui demander comment il a compris','« Qu’est-ce qui t’a fait penser que je voulais arrêter ? »','reaction-demander','ask',2,-1,1)
+  ]);
+ n['reaction-dire']=S('reaction-dire','04','Il comprend enfin ce qu’elle a vécu',
+  'Noa baisse les yeux. « Tu as raison, j’aurais dû demander. » Léa voit qu’il est désolé. Pourtant, une excuse ne suffit pas à effacer les jours où elle s’est sentie exclue.','choix-fin-dire',
+  {speaker:'NOA',dialogue:'« Je voulais te laisser souffler, pas t’écarter. »'});
+ n['reaction-cacher']=S('reaction-cacher','04','Le sourire qui sonne faux',
+  '« Tu dis ça, mais tu as l’air triste », répond Noa. Il serre la feuille dans ses mains. Léa aurait voulu éviter une scène, mais elle voit maintenant qu’ils repartiraient sans se comprendre.','choix-fin-cacher',
+  {speaker:'NOA',dialogue:'« Si quelque chose te blesse, je préfère que tu me le dises. »'});
+ n['reaction-demander']=S('reaction-demander','04','Deux versions de la même semaine',
+  'Noa ressort son téléphone. Ensemble, ils relisent ce qu’ils se sont vraiment écrit lundi soir, sans inventer les mots de l’autre. Ils découvrent à quel moment leur compréhension a commencé à diverger.','choix-fin-demander',
+  {speaker:'NOA',dialogue:'« Je croyais t’aider. Mais j’ai décidé à ta place. »'});
+ n['choix-fin-dire']=D('choix-fin-dire','04','Qu’est-ce que Léa veut maintenant ?',
+  'Noa semble prêt à écouter. Léa peut poser un besoin, laisser la colère parler ou prendre une pause.',[
+   C('finchoix-clarifier','Dire ce dont elle a besoin','« La prochaine fois, demande-moi avant de décider pour nous deux. »','fin-clarifier','express',2,-1,2),
+   C('finchoix-attaquer','L’accuser de l’avoir remplacée','« Tu t’en fiches de moi, de toute façon ! »','fin-attaquer','attack',-2,3,1),
+   C('finchoix-pause','Demander du temps','« J’ai encore mal. On peut se reparler demain ? »','fin-pause','pause',1,-1,1)
+  ]);
+ n['choix-fin-cacher']=D('choix-fin-cacher','04','Le silence devient lourd',
+  'Léa peut revenir sur sa première réponse, maintenir le silence ou proposer un moment plus calme.',[
+   C('finchoix-oser','Revenir sur ses mots','« En fait, ce n’est pas rien. »','fin-oser','express',2,-1,2),
+   C('finchoix-cacher','Faire semblant jusqu’au bout','« Vraiment, ça va. »','fin-cacher','avoid',-2,1,-2),
+   C('finchoix-plus-tard','Fixer un autre rendez-vous','« Pas ici. Demain après les cours ? »','fin-plus-tard','pause',1,-1,1)
+  ]);
+ n['choix-fin-demander']=D('choix-fin-demander','04','Il manque encore quelque chose',
+  'Léa comprend mieux son intention. Reste à savoir comment elle veut avancer.',[
+   C('finchoix-curiosite','Éclaircir le malentendu','« On pourrait se demander la prochaine fois, plutôt que deviner ? »','fin-curiosite','ask',2,-1,2),
+   C('finchoix-soupcon','Mettre son explication en doute','« Comment je peux savoir que tu dis vrai ? »','fin-soupcon','attack',-1,2,0),
+   C('finchoix-reparer','Proposer une nouvelle règle','« On reprend le carnet et on décide à deux ? »','fin-reparer','repair',2,-1,2)
+  ]);
+ // All nine conclusions reflect a different choice and a concrete after-effect.
+ n['fin-clarifier']=E('fin-clarifier','Une place pour chacun',
+  'Le mercredi suivant, Noa attend Léa devant l’atelier. Il lui montre les dessins de mardi et lui demande ce qu’elle veut faire de leur ville imaginaire. Léa choisit de venir une heure. Elle ne se sent pas encore tout à fait rassurée, mais cette fois, la décision lui appartient.',
+  'Noa a compris que vouloir protéger Léa ne lui donnait pas le droit de choisir à sa place.','Une demande précise permet de réparer davantage qu’un pardon lancé trop vite.');
+ n['fin-attaquer']=E('fin-attaquer','Des mots qui restent',
+  'Noa se redresse. « Ce n’est pas juste », répond-il. Il s’éloigne avant la sonnerie. Le soir, Léa regarde leur carnet sans l’ouvrir. Elle a toujours le droit d’être blessée. Mais elle se demande si son accusation parlait de ce que Noa avait fait, ou de ce qu’elle craignait de perdre.',
+  'Noa a entendu une condamnation de son amitié plutôt qu’une demande de réparation.','La colère peut être légitime sans que toutes les paroles prononcées sous son effet soient justes.');
+ n['fin-pause']=E('fin-pause','Demain, pas maintenant',
+  'Léa quitte le banc. Noa ne la retient pas. Le soir, il lui envoie : « Demain, si tu veux. » Elle répond qu’elle sera là. Rien n’est réparé encore, mais ils ont choisi de ne pas se parler sous la pression.',
+  'Noa accepte qu’une conversation importante ait besoin de temps.','Une pause claire peut protéger la relation plutôt que la rompre.');
+ n['fin-oser']=E('fin-oser','Le courage de revenir',
+  '« En fait, si, ça me fait quelque chose », murmure Léa. Noa s’assied près d’elle. Elle raconte les soirs difficiles à la maison et la photo découverte au réveil. Il écoute. À la sonnerie, ils n’ont pas tout réglé, mais ils marchent ensemble vers le bâtiment.',
+  'Noa avait perçu une contradiction entre les paroles et le visage de Léa ; elle lui donne enfin une explication.','On peut corriger une première réponse et oser dire ce qui compte.');
+ n['fin-cacher']=E('fin-cacher','La place vide',
+  'Ils se séparent en promettant de s’écrire. Aucun n’envoie de message. Le mercredi suivant, Léa passe devant la salle de l’atelier sans entrer. Elle voit le carnet bleu dépasser de son sac. Garder le silence lui a évité un moment difficile, mais pas la solitude.',
+  'Noa respecte la parole de Léa tout en sentant qu’il lui manque une partie de l’histoire.','Ne rien dire est aussi un choix, parfois avec des conséquences différées.');
+ n['fin-plus-tard']=E('fin-plus-tard','Une conversation sans public',
+  'Le lendemain, Léa retrouve Noa à la médiathèque. Elle lui dit que son silence de la veille ne signifiait pas qu’elle avait pardonné. Lui pose la feuille du nouvel atelier sur la table. Ils parlent doucement, sans la cour autour d’eux. Léa repart avec quelques réponses et une proposition qu’elle est libre d’accepter.',
+  'Noa comprend que choisir un meilleur moment ne revient pas à ignorer la blessure.','Dire quand on reparlera est plus clair que laisser l’autre dans le doute.');
+ n['fin-curiosite']=E('fin-curiosite','Une phrase, deux sens',
+  'Léa et Noa relisent le message du lundi. Ils avaient compris deux choses différentes. « La prochaine fois, on demande ? » propose Léa. Il acquiesce. Le mercredi, ils reprennent leur dessin en commençant par se demander ce que chacun veut faire.',
+  'Noa comprend que son interprétation ne valait pas une réponse explicite de son amie.','Une question peut corriger une supposition sans effacer la déception.');
+ n['fin-soupcon']=E('fin-soupcon','La confiance à reconstruire',
+  'Noa montre les messages du professeur. Léa n’est toujours pas sûre de pouvoir lui faire confiance. Elle accepte pourtant de dire ce qui l’aiderait : être prévenue, choisir ensemble, voir des actes. Ils ne se retrouvent pas mercredi. La suite dépendra de ce qu’ils feront, pas de ce qu’ils promettent.',
+  'Noa se sent mis en cause mais réalise qu’il devra montrer qu’il sait consulter Léa.','Demander des comportements concrets aide davantage qu’exiger une preuve impossible.');
+ n['fin-reparer']=E('fin-reparer','Une nouvelle page',
+  'Noa sort le carnet bleu. Léa relit les dernières lignes. Ils écrivent une règle en première page : « On peut faire une pause. On ne décide pas à la place de l’autre. » Puis ils imaginent ensemble une nouvelle porte pour leur ville.',
+  'Noa retrouve une façon de construire avec Léa, sans prétendre que la peine a disparu.','Une réparation réelle change les habitudes, pas seulement les mots.');
+ return {...ep,age:'12–18 ans',duration:'12–18 minutes',start:'ouverture',nodes:n};
 }
