@@ -4,23 +4,34 @@ import {readFileSync} from 'node:fs';
 import {episodes} from '../src/content/episodes.ts';
 import {newGame,nextScene,pickChoice,validateEpisode,endingNodes} from '../src/engine/story.ts';
 const ep=episodes[0];
-test('the opening is already playable, before a wall of narrative',()=>{
- assert.equal(ep.start,'intro-decision');
- assert.equal(ep.nodes[ep.start].kind,'decision');
- assert.equal(ep.nodes[ep.start].choices.length,3);
+test('the opening is coherent and offers a meaningful first choice after one short scene',()=>{
+ assert.equal(ep.start,'ouverture');
+ assert.equal(ep.nodes[ep.start].kind,'scene');
+ const next=nextScene(ep,newGame(ep));assert.equal(next.nodeId,'choix-atelier');
+ assert.equal(ep.nodes[next.nodeId].kind,'decision');
+ assert.equal(ep.nodes[next.nodeId].choices.length,3);
 });
-test('the first choice has an immediate and later consequence',()=>{
- const pairs=[['intro-franche','retour-franche'],['intro-camille','retour-camille'],['intro-silence','retour-silence']];
- for(const [choice,expected] of pairs){
-  let state=pickChoice(ep,newGame(ep),choice);
-  assert.ok(state.nodeId.startsWith('intro-suite-'));
-  let encounter=false;
-  for(let step=0;step<30;step++){
-   if(state.nodeId==='chapitre-rencontre'){state=nextScene(ep,state);encounter=true;break;}
-   const node=ep.nodes[state.nodeId];
-   state=node.kind==='decision'?pickChoice(ep,state,node.choices[0].id):nextScene(ep,state);
-  }
-  assert.equal(encounter,true);
+test('Monday evening words change a specific concrete event at the Wednesday bench',()=>{
+ const cases=[
+  ['soir-clair','banc-veille-clair'],
+  ['soir-vague','banc-veille-vague'],
+  ['soir-muet','banc-veille-muet']
+ ];
+ for(const [choice,expected] of cases){
+  let state=nextScene(ep,newGame(ep));
+  state=pickChoice(ep,state,'atelier-promettre');
+  let visited=0;
+  while(state.nodeId!=='choix-soir'&&visited++<12)state=nextScene(ep,state);
+  assert.equal(state.nodeId,'choix-soir');
+  state=pickChoice(ep,state,choice);
+  visited=0;
+  while(state.nodeId!=='choix-photo'&&visited++<12)state=nextScene(ep,state);
+  assert.equal(state.nodeId,'choix-photo');
+  state=pickChoice(ep,state,'photo-direct');
+  visited=0;
+  while(state.nodeId!=='banc-contexte'&&visited++<12)state=nextScene(ep,state);
+  assert.equal(state.nodeId,'banc-contexte');
+  state=nextScene(ep,state);
   assert.equal(state.nodeId,expected);
  }
 });
