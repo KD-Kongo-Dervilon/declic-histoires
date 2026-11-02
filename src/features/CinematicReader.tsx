@@ -22,7 +22,11 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
  const image=sceneShot(episode.id,node.id,pageIndex)||episode.image;
  const lastDecision=game.history[game.history.length-1];
  const earlierEcho=node.kind==='ending'?memoryEcho(episode.id,game.history):null;
- const visibleConsequence=node.kind==='scene'&&!!lastDecision&&(/suite|echo|banc-(promesse|prevenu|flou)/.test(node.id));
+ const consequenceSource=node.id.startsWith('atelier-suite')||/^banc-(promesse|prevenu|flou)$/.test(node.id)?'atelier-':
+   node.id.startsWith('soir-suite')?'soir-':
+   node.id.startsWith('photo-suite')||/^echo-(direct|camille|ignore)$/.test(node.id)?'photo-':null;
+ const cause=consequenceSource?[...game.history].reverse().find(h=>h.id.startsWith(consequenceSource)):undefined;
+ const visibleConsequence=node.kind==='scene'&&!!cause;
  const shotName=episode.id==='ce-qu-on-na-pas-dit'?['photo','maison','souvenir','attente','approche','conversation'].find(x=>image.includes(x))||'story':'histoire';
  const progress=Math.min(100,Math.round(100*(game.visited.length+(pageIndex+1)/Math.max(1,pages.length))/Math.max(episodeIndex===0?35:14,game.visited.length+1)));
  const goPage=()=>{onPageTurn();setPageIndex(i=>Math.min(i+1,pages.length-1))};
@@ -44,7 +48,7 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
      <h1>{node.title}</h1>
      <div className="v11-readable-text">{currentPage}</div>
      {earlierEcho&&last&&<div className="v12-choice-impact"><span>DES CHOIX QUI REVIENNENT</span><p>{earlierEcho}</p></div>}
-     {visibleConsequence&&lastDecision&&pageIndex===0&&<div className="v12-choice-impact"><span>↳ TA DÉCISION CHANGE CETTE SCÈNE</span><strong>{lastDecision.label}</strong><small>Observe la réaction et compare-la en rejouant autrement.</small></div>}
+     {visibleConsequence&&cause&&pageIndex===0&&<div className="v12-choice-impact"><span>↳ CONSÉQUENCE D’UN CHOIX PRÉCÉDENT</span><strong>{cause.label}</strong></div>}
      {(variation.dialogue||adaptiveReply)&&pageIndex===0&&<blockquote className="v11-character-line"><span>{node.speaker||'DANS LA SCÈNE'}</span><p>{node.kind==='reaction'&&adaptiveReply?adaptiveReply:variation.dialogue}</p></blockquote>}
      {variation.mode==='ai'&&<span className="v11-ai-label">✦ Adaptation narrative IA</span>}
      {variation.consequence&&last&&<p className="v11-consequence">{variation.consequence}</p>}
