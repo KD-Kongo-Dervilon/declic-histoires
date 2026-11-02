@@ -1,2 +1,2 @@
 import {execute} from '../../server/cloudflare';
-export default function handler(request:Request){return execute(request,'narrate')}
+export default function handler(req:any,res:any){return execute(req,res,'narrate')}

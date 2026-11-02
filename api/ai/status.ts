@@ -1,1 +1,1 @@
-export default function handler(){return Response.json({provider:'cloudflare-workers-ai',configured:Boolean(process.env.CLOUDFLARE_ACCOUNT_ID&&process.env.CLOUDFLARE_AI_API_TOKEN)},{headers:{'cache-control':'no-store'}})}
+export default function handler(_req:any,res:any){return res.status(200).json({provider:'cloudflare-workers-ai',configured:Boolean(process.env.CLOUDFLARE_ACCOUNT_ID&&process.env.CLOUDFLARE_AI_API_TOKEN)})}

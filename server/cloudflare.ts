@@ -8,14 +8,15 @@ const stories:Record<string,string>={
 };
 const respond=(value:unknown,status=200)=>new Response(JSON.stringify(value),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store'}});
 const str=(x:unknown,n:number)=>typeof x==='string'?x.slice(0,n):'';
-async function execute(req:Request,kind:'narrate'|'adapt'):Promise<Response>{
+async function execute(req:any,res:any,kind:'narrate'|'adapt'):Promise<any>{
+ const respond=(value:unknown,status=200)=>res.status(status).json(value);
  if(req.method!=='POST')return respond({error:'Method not allowed'},405);
- const origin=req.headers.get('origin');if(!origin||origin!==new URL(req.url).origin)return respond({error:'Origin refused'},403);
- if(Number(req.headers.get('content-length')||'0')>7000)return respond({error:'Too large'},413);
+ const origin=req.headers.origin;if(!origin||origin!==('https://'+req.headers.host))return respond({error:'Origin refused'},403);
+ if(Number(req.headers['content-length']||'0')>7000)return respond({error:'Too large'},413);
  const account=process.env.CLOUDFLARE_ACCOUNT_ID;
  const token=process.env.CLOUDFLARE_AI_API_TOKEN;
  if(!account||!token)return respond({error:'IA non configurée',mode:'offline'},503);
- let payload:Record<string,unknown>;try{payload=await req.json() as Record<string,unknown>}catch{return respond({error:'Invalid JSON'},400)}
+ let payload:Record<string,unknown>;try{payload=(typeof req.body==='string'?JSON.parse(req.body):req.body) as Record<string,unknown>}catch{return respond({error:'Invalid JSON'},400)}
  const episodeId=str(payload?.episodeId,80);if(!stories[episodeId])return respond({error:'Épisode inconnu'},400);
  let system='',facts:any={story:stories[episodeId]};
  if(kind==='narrate'){
