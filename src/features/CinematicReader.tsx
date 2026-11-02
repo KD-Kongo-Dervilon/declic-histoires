@@ -22,7 +22,7 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
  const image=sceneShot(episode.id,node.id,pageIndex)||episode.image;
  const earlierEcho=node.kind==='ending'?memoryEcho(episode.id,game.history):null;
  const consequenceSource=node.id.startsWith('atelier-suite')||/^banc-(promesse|prevenu|flou)$/.test(node.id)?'atelier-':
-   node.id.startsWith('soir-suite')?'soir-':
+   (node.id.startsWith('soir-suite')||node.id.startsWith('banc-veille'))?'soir-':
    node.id.startsWith('photo-suite')||/^echo-(direct|camille|ignore)$/.test(node.id)?'photo-':null;
  const cause=consequenceSource?[...game.history].reverse().find(h=>h.id.startsWith(consequenceSource)):undefined;
  const visibleConsequence=node.kind==='scene'&&!!cause;
