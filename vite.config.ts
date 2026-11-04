@@ -13,7 +13,7 @@ export default defineConfig({
         {src:'/assets/icon-512.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}
       ]
     },
-    workbox: {globPatterns:['**/*.{js,css,html,svg,png,webp,mp3}'], globIgnores:['**/assets/icon-*.png'], navigateFallback: '/index.html', cleanupOutdatedCaches:true}
+    workbox: {globPatterns:['**/*.{js,css,html,svg,png,webp,jpg,mp3}'], navigateFallback: '/index.html', navigateFallbackDenylist:[/^\/noel(?:\/|$)/, /^\/api\//], cleanupOutdatedCaches:true}
   })],
   build: {target:'es2022'},
   server: {host:true}

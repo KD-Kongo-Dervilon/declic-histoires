@@ -1,3 +1,4 @@
+import {decisionScenes} from './decisionScenes.ts';
 import type {Episode} from '../types';
 type Act = {before:string;title:string;text:string;voice:string};
 const portraits: Record<string,{morning:Act;memory:Act;stakes:Act;after:Act}>={
@@ -47,7 +48,7 @@ export function enrichEpisode(episode:Episode):Episode{
  // The original pre-decision node now links through another lived scene.
  const last=beforeIds[2];const original=nodes[last].next;
  nodes[last]={...nodes[last],next:'v7-portrait-final'};
- nodes['v7-portrait-final']={id:'v7-portrait-final',kind:'scene',phase:'00',eyebrow:'CE QUI SE JOUE VRAIMENT',title:'Tout peut encore changer.',speaker:episode.id==='ce-qu-on-na-pas-dit'?'LÉA · PENSÉE':'TON PERSONNAGE · PENSÉE',text:'La conversation ne se résume pas à choisir une bonne phrase. Il y a les heures passées à attendre, les souvenirs qui reviennent, la peur de mal faire et ce qu’on ignore de l’autre. Tu as maintenant assez de contexte pour prendre une décision qui comptera vraiment : elle ouvrira une scène différente, puis une autre conséquence. Certaines fins laisseront des blessures. D’autres permettront de parler. Aucune ne fera disparaître tout ce qui s’est passé.',next:original};
+ nodes['v7-portrait-final']={id:'v7-portrait-final',kind:'scene',phase:'00',eyebrow:'CE QUI SE JOUE VRAIMENT',title:'Tout peut encore changer.',speaker:episode.id==='ce-qu-on-na-pas-dit'?'LÉA · PENSÉE':'TON PERSONNAGE · PENSÉE',text:decisionScenes[episode.id]?.before ?? p.stakes.text,next:original};
  const firstReaction=episode.id==='ce-qu-on-na-pas-dit'?'reponse-exprimer':'reponse-0';
  const previous=nodes[firstReaction];if(previous?.next){nodes[firstReaction]={...previous,next:'v7-response-depth'};nodes['v7-response-depth']={id:'v7-response-depth',kind:'scene',phase:'02',eyebrow:'APRÈS LE PREMIER MOT',title:p.after.title,speaker:p.after.voice,text:p.after.text,next:previous.next};}
  return {...episode,nodes,start,duration:'15–25 minutes'};

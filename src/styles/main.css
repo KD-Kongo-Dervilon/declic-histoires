@@ -359,3 +359,26 @@
 .v13-pending{margin:0 0 18px;padding:10px 13px;border-left:2px solid #cf9a65;background:#192d38;color:#b9c5ca;font-size:.76rem;line-height:1.5}
 @media(max-width:760px){.v13-previous{width:100%;text-align:center;margin-top:14px}}
 @media(prefers-reduced-motion:reduce){.v13-previous{transition:none}}
+
+.winter-link{display:inline-flex;align-items:center;gap:14px;min-height:44px;margin:8px 0 20px;color:#f1c997;text-underline-offset:4px}
+.v5-app :is(button,a,summary,textarea,input):focus-visible{outline:3px solid #ffcf93;outline-offset:3px}
+.v11-page-turn h1:focus{outline:none}
+.v11-book-art__visual{background:radial-gradient(ellipse at center,#2b424a,#101d27 78%)}
+@media(min-width:761px){
+ .v11-book-art__visual{aspect-ratio:16/10}
+ .v11-reading-pane{align-self:center}
+}
+@media (min-width:761px) and (max-width:1024px) and (orientation:portrait){
+ .v11-reader{display:block}
+ .v11-book-art{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 32px;align-items:center;padding:26px 7vw;min-height:0;border-right:0;border-bottom:1px solid #344651}
+ .v11-book-art__top,.v11-art-pagination{grid-column:1/-1}
+ .v11-book-art__visual{margin:0;aspect-ratio:16/9}
+ .v11-book-art__bottom{display:block;margin:0;padding:0}
+ .v11-book-art__bottom h2{font-size:2.55rem;margin:8px 0 18px}
+ .v11-art-pagination{padding-top:0}
+ .v11-reading-pane{min-height:0;max-width:700px;padding:30px 7vw 48px}
+}
+@media screen and (max-width:720px){
+ .v5-app:not(.is-reading) .site-footer{display:flex;align-items:flex-start}
+ .site-footer button{min-height:44px;padding:6px 0}
+}

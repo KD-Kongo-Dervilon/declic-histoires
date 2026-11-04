@@ -1,7 +1,7 @@
 import {useEffect,useMemo,useRef,useState} from 'react';
 import type {Episode,NarrativeNode,StoryState} from '../types';
 import {bookPages,sceneShot} from './readability';
-import {narratePage,narrativeAIEnabled} from '../services/narrative';
+import {narratePage} from '../services/narrative';
 import {memoryEcho} from './continuity';
 
 type Props={episode:Episode;node:NarrativeNode;game:StoryState;episodeIndex:number;knownEndings:number;emotion:string;onEmotion:(v:string)=>void;onChoose:(id:string)=>void;onNext:()=>void;onComplete:()=>void;onBack:()=>void;onPageTurn:()=>void;onFreeText?:(value:string)=>Promise<void>;busy?:boolean;error?:string;reducedMotion?:boolean;adaptiveReply?:string};
@@ -10,14 +10,21 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
  const hasTurnedPage=useRef(false);
  const [textInput,setTextInput]=useState('');
  const [variation,setVariation]=useState<{text:string;dialogue?:string;consequence?:string;mode:'ai'|'offline'}>({text:node.text,dialogue:node.dialogue,mode:'offline'});
- const [loading,setLoading]=useState(narrativeAIEnabled());
- useEffect(()=>{let active=true;const controller=new AbortController();if(narrativeAIEnabled()){
+ const heading=useRef<HTMLHeadingElement>(null);
+ useEffect(()=>{
+  const title=heading.current;
+  title?.focus({preventScroll:true});
+  if(hasTurnedPage.current && title && title.getBoundingClientRect().top<64){
+   title.scrollIntoView({block:'center'});
+  }
+ },[pageIndex]);
+ useEffect(()=>{let active=true;const controller=new AbortController();
   void narratePage({episodeId:episode.id,node,history:game.history,impact:game.impact,signal:controller.signal}).then(v=>{if(active){
    // Never rewrite a page while the reader is already turning through it.
    if(!hasTurnedPage.current)setVariation(v);
-   setLoading(false);
+
   }});
- }else setLoading(false);
+
  return ()=>{active=false;controller.abort()};
  // This reader is remounted with a key for each story node.
  },[episode.id,node,game.history,game.impact]);
@@ -38,9 +45,9 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
  return <main className={'v11-reader'+(reducedMotion?' v11-reduced':'')} aria-label={`Lecture interactive de ${episode.title}`}>
   <section className="v11-book-art" aria-label="Illustration de l'histoire">
    <div className="v11-book-art__top"><span>✦ DÉCLIC <small>HISTOIRES À VIVRE</small></span><span>ÉPISODE {String(episodeIndex+1).padStart(2,'0')}</span></div>
-   <div key={`${node.id}-${pageIndex}`} className="v11-book-art__visual" data-shot={shotName}>
+   <div key={image} className="v11-book-art__visual" data-shot={shotName}>
     <img src={image} alt={`Scène illustrée : ${node.title}`} loading="eager"/>
-    <span className="v11-book-art__film">UNE HISTOIRE QUI CHANGE AVEC TES CHOIX</span>
+
    </div>
    <div className="v11-book-art__bottom"><div><span className="v11-chapter">{node.eyebrow}</span><h2>{episode.title}</h2></div><span className="v11-end-count">{knownEndings} / 9 fins</span></div>
    <div className="v11-art-pagination"><div className="v11-progress-track"><span style={{width:`${progress}%`}}/></div><small>{game.history.length} choix déjà faits</small></div>
@@ -48,10 +55,9 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
   <section className="v11-reading-pane">
    <div className="v11-reader-tools"><button onClick={onBack} className="v11-back">← Histoires</button><span>CHAPITRE {node.phase||'01'} · PAGE {pageIndex+1}/{pages.length}</span></div>
    <>
-    {loading&&<p className="v13-pending" role="status">Tu peux déjà lire pendant que la scène s’adapte à tes choix.</p>}
-    <div key={`${node.id}-${pageIndex}-${variation.mode}`} className="v11-page-turn">
+    <div key={`${node.id}-${pageIndex}`} className="v11-page-turn">
      <span className="v11-kicker">{node.kind==='decision'?'À TOI DE JOUER':node.kind==='ending'?'UNE FIN POSSIBLE':'TON HISTOIRE'}</span>
-     <h1>{node.title}</h1>
+     <h1 ref={heading} tabIndex={-1} aria-label={node.title + ", page " + (pageIndex+1) + " sur " + pages.length}>{node.title}</h1>
      <div className="v11-readable-text">{currentPage}</div>
      {earlierEcho&&last&&<div className="v12-choice-impact"><span>DES CHOIX QUI REVIENNENT</span><p>{earlierEcho}</p></div>}
      {visibleConsequence&&cause&&pageIndex===0&&<div className="v12-choice-impact"><span>↳ CONSÉQUENCE D’UN CHOIX PRÉCÉDENT</span><strong>{cause.label}</strong></div>}
