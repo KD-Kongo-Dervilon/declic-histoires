@@ -352,3 +352,10 @@
 @media(max-width:760px){.v12-louis__reading{padding:18px}.v12-louis__reading>p{font-size:1rem;line-height:1.67}.v12-louis__actions .btn{flex:1;min-height:45px;white-space:normal}}
 
 .v12-choice-impact p{font:1rem/1.7 Georgia,serif;color:#ebdfd0;margin:0}
+
+/* DÉCLIC V13 — unobtrusive, accessible controls for a real book-like reader. */
+.v13-previous{align-self:flex-start;margin-top:18px;min-height:44px;padding:10px 16px;border:1px solid #71808a;border-radius:10px;background:transparent;color:#f2c69c;font:600 .85rem/1.3 system-ui,sans-serif;cursor:pointer;transition:background .18s,border-color .18s}
+.v13-previous:hover,.v13-previous:focus-visible{background:#233947;border-color:#efbb85;outline-offset:3px}
+.v13-pending{margin:0 0 18px;padding:10px 13px;border-left:2px solid #cf9a65;background:#192d38;color:#b9c5ca;font-size:.76rem;line-height:1.5}
+@media(max-width:760px){.v13-previous{width:100%;text-align:center;margin-top:14px}}
+@media(prefers-reduced-motion:reduce){.v13-previous{transition:none}}

@@ -1,4 +1,4 @@
-import {useEffect,useMemo,useState} from 'react';
+import {useEffect,useMemo,useRef,useState} from 'react';
 import type {Episode,NarrativeNode,StoryState} from '../types';
 import {bookPages,sceneShot} from './readability';
 import {narratePage,narrativeAIEnabled} from '../services/narrative';
@@ -7,11 +7,16 @@ import {memoryEcho} from './continuity';
 type Props={episode:Episode;node:NarrativeNode;game:StoryState;episodeIndex:number;knownEndings:number;emotion:string;onEmotion:(v:string)=>void;onChoose:(id:string)=>void;onNext:()=>void;onComplete:()=>void;onBack:()=>void;onPageTurn:()=>void;onFreeText?:(value:string)=>Promise<void>;busy?:boolean;error?:string;reducedMotion?:boolean;adaptiveReply?:string};
 export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emotion,onEmotion,onChoose,onNext,onComplete,onBack,onPageTurn,onFreeText,busy,error,reducedMotion,adaptiveReply}:Props){
  const [pageIndex,setPageIndex]=useState(0);
+ const hasTurnedPage=useRef(false);
  const [textInput,setTextInput]=useState('');
  const [variation,setVariation]=useState<{text:string;dialogue?:string;consequence?:string;mode:'ai'|'offline'}>({text:node.text,dialogue:node.dialogue,mode:'offline'});
  const [loading,setLoading]=useState(narrativeAIEnabled());
  useEffect(()=>{let active=true;const controller=new AbortController();if(narrativeAIEnabled()){
-  void narratePage({episodeId:episode.id,node,history:game.history,impact:game.impact,signal:controller.signal}).then(v=>{if(active){setVariation(v);setLoading(false)}});
+  void narratePage({episodeId:episode.id,node,history:game.history,impact:game.impact,signal:controller.signal}).then(v=>{if(active){
+   // Never rewrite a page while the reader is already turning through it.
+   if(!hasTurnedPage.current)setVariation(v);
+   setLoading(false);
+  }});
  }else setLoading(false);
  return ()=>{active=false;controller.abort()};
  // This reader is remounted with a key for each story node.
@@ -28,7 +33,8 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
  const visibleConsequence=node.kind==='scene'&&!!cause;
  const shotName=episode.id==='ce-qu-on-na-pas-dit'?['photo','maison','souvenir','attente','approche','conversation'].find(x=>image.includes(x))||'story':'histoire';
  const progress=Math.min(100,Math.round(100*(game.visited.length+(pageIndex+1)/Math.max(1,pages.length))/Math.max(episodeIndex===0?35:14,game.visited.length+1)));
- const goPage=()=>{onPageTurn();setPageIndex(i=>Math.min(i+1,pages.length-1))};
+ const goPage=()=>{hasTurnedPage.current=true;onPageTurn();setPageIndex(i=>Math.min(i+1,pages.length-1))};
+ const previousPage=()=>{hasTurnedPage.current=true;onPageTurn();setPageIndex(i=>Math.max(0,i-1))};
  return <main className={'v11-reader'+(reducedMotion?' v11-reduced':'')} aria-label={`Lecture interactive de ${episode.title}`}>
   <section className="v11-book-art" aria-label="Illustration de l'histoire">
    <div className="v11-book-art__top"><span>✦ DÉCLIC <small>HISTOIRES À VIVRE</small></span><span>ÉPISODE {String(episodeIndex+1).padStart(2,'0')}</span></div>
@@ -41,7 +47,8 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
   </section>
   <section className="v11-reading-pane">
    <div className="v11-reader-tools"><button onClick={onBack} className="v11-back">← Histoires</button><span>CHAPITRE {node.phase||'01'} · PAGE {pageIndex+1}/{pages.length}</span></div>
-   {loading?<div className="v11-wait" role="status"><span className="v11-dots">•••</span><h3>La suite prend forme…</h3><p>Les personnages tiennent compte de tes choix.</p></div>:<>
+   <>
+    {loading&&<p className="v13-pending" role="status">Tu peux déjà lire pendant que la scène s’adapte à tes choix.</p>}
     <div key={`${node.id}-${pageIndex}-${variation.mode}`} className="v11-page-turn">
      <span className="v11-kicker">{node.kind==='decision'?'À TOI DE JOUER':node.kind==='ending'?'UNE FIN POSSIBLE':'TON HISTOIRE'}</span>
      <h1>{node.title}</h1>
@@ -52,6 +59,7 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
      {variation.mode==='ai'&&<span className="v11-ai-label">✦ Adaptation narrative IA</span>}
      {variation.consequence&&last&&<p className="v11-consequence">{variation.consequence}</p>}
     </div>
+    {pageIndex>0&&<button type="button" className="v13-previous" onClick={previousPage} aria-label="Revenir à la page précédente de cette scène">← Page précédente</button>}
     {!last?<div className="v11-page-actions"><button className="v11-primary" onClick={goPage}>Tourner la page <span aria-hidden>↗</span></button><span className="v11-page-hint">La scène continue. Le décor change quand l’histoire change.</span></div>:node.kind==='decision'?<>
      <div className="v11-decision-header"><span>ET MAINTENANT ?</span><p>Tu décides de la suite.</p></div>
      <div className="v11-decisions">{node.choices?.map((choice,i)=><button key={choice.id} onClick={()=>onChoose(choice.id)} className="v11-decision"><span className="v11-decision-number">0{i+1}</span><span><strong>{choice.title}</strong><small>{choice.words}</small></span><b aria-hidden>›</b></button>)}</div>
@@ -59,7 +67,7 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
      {onFreeText&&<details className="v11-free"><summary>Ou réponds avec tes propres mots</summary><label htmlFor="v11-freetext">Une réponse fictive, sans information personnelle.</label><textarea id="v11-freetext" maxLength={220} rows={2} placeholder="Je dirais…" value={textInput} onChange={e=>setTextInput(e.target.value)}/><button disabled={busy||textInput.trim().length<5} onClick={()=>void onFreeText(textInput)}>{busy?'Adaptation…':'Voir sa réaction →'}</button>{error&&<p role="alert">{error}</p>}</details>}
     </>:node.kind==='ending'?<><div className="v11-after"><strong>De son côté…</strong><p>{node.perspective}</p></div><button className="v11-primary" onClick={onComplete}>Découvrir mon parcours et cette fin →</button></>:<div className="v11-page-actions"><button className="v11-primary" onClick={onNext}>Continuer l’histoire <span aria-hidden>↗</span></button><span className="v11-page-hint">Observe ce qui a changé depuis ta dernière décision.</span></div>}
     <div className="v11-reader-footer"><span>✦ Une fiction · Chaque décision compte</span><span>{game.history.length} décisions</span></div>
-   </>}
+   </>
   </section>
  </main>;
 }
