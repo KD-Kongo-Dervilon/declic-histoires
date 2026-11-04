@@ -14,7 +14,7 @@ async function execute(req:any,res:any,kind:'narrate'|'adapt'):Promise<any>{
  const origin=req.headers.origin;if(!origin||origin!==('https://'+req.headers.host))return respond({error:'Origin refused'},403);
  if(Number(req.headers['content-length']||'0')>7000)return respond({error:'Too large'},413);
  const account=process.env.CLOUDFLARE_ACCOUNT_ID;
- const token=process.env.CLOUDFLARE_AI_API_TOKEN;
+ const token=(process.env.CLOUDFLARE_AI_API_TOKEN || process.env.key_cloudflare);
  if(!account||!token)return respond({error:'IA non configurée',mode:'offline'},503);
  let payload:Record<string,unknown>;try{payload=(typeof req.body==='string'?JSON.parse(req.body):req.body) as Record<string,unknown>}catch{return respond({error:'Invalid JSON'},400)}
  const episodeId=str(payload?.episodeId,80);if(!stories[episodeId])return respond({error:'Épisode inconnu'},400);
