@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://declic-histoires.vercel.app/sitemap.xml
