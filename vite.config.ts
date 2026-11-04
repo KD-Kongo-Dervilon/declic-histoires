@@ -4,6 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
   plugins: [react(), VitePWA({
     registerType: 'autoUpdate',
+    includeManifestIcons: false,
     manifest: {
       id: '/', name: 'DÉCLIC — Histoires à vivre', short_name: 'DÉCLIC', lang:'fr',
       description:'Des histoires interactives pour ressentir, comprendre et choisir.',
@@ -13,7 +14,7 @@ export default defineConfig({
         {src:'/assets/icon-512.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}
       ]
     },
-    workbox: {globPatterns:['**/*.{js,css,html,svg,png,webp,jpg,mp3}'], navigateFallback: '/index.html', navigateFallbackDenylist:[/^\/noel(?:\/|$)/, /^\/api\//], cleanupOutdatedCaches:true}
+    workbox: {globPatterns:['**/*.{js,css,html,svg,png,webp,jpg,mp3}'], dontCacheBustURLsMatching:/-[a-zA-Z0-9_-]{8,}\.(?:js|css)$/, navigateFallback: '/index.html', navigateFallbackDenylist:[/^\/noel(?:\/|$)/, /^\/api\//], cleanupOutdatedCaches:true}
   })],
   build: {target:'es2022'},
   server: {host:true}
