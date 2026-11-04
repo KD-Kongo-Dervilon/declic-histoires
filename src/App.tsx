@@ -103,7 +103,7 @@ function App(){
     <button className="feature-hero__progress" onClick={()=>view('progress')} aria-label="Voir ma progression de l’épisode 1"><strong>◎ &nbsp; Ma progression</strong><span>{endingCount(progress,episodes[0].id)} / 9 fins découvertes</span><span className="dashboard-track"><i style={{width:`${100*endingCount(progress,episodes[0].id)/9}%`}}/></span></button>
    </section>
    <aside className="landing-library">
-    <div className="landing-library__head"><span className="eyebrow">▤ &nbsp; LA BIBLIOTHÈQUE DÉCLIC</span><h2>Une histoire en appelle une autre.</h2><p>Retrouve ces histoires en livre pour prolonger l’émotion.</p></div>
+    <div className="landing-library__head"><span className="eyebrow">▤ &nbsp; LA BIBLIOTHÈQUE DÉCLIC</span><h2>Une histoire en appelle une autre.</h2><p>Retrouve ces histoires en livre pour prolonger l’émotion.</p><a href="/noel/" style={{display:"inline-flex",marginTop:"13px",padding:"10px 14px",borderRadius:"8px",background:"#e6c78b",color:"#172b42",fontWeight:800,fontSize:"13px",textDecoration:"none"}}>✦ Spécial Noël — Découvrir les 30 histoires ↗</a></div>
     <div className="landing-library__books">{moneyBooks.filter(b=>b.url).map(b=><article key={b.id}>
      <button className="landing-library__preview" onClick={()=>openBook(b.id)} aria-label={`Découvrir ${b.name}`}><img src={b.image} alt={`Couverture : ${b.name}`}/></button>
      <div className="landing-library__book-info"><h3>{b.name}</h3><p>{b.tag}</p><span>{b.age}</span></div>
