@@ -25,6 +25,7 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
  },[episode.id,node,game.history,game.impact]);
  const pages=useMemo(()=>bookPages(variation.text,node.kind==='decision'?185:210),[variation.text,node.kind]);
  const currentPage=pages[Math.min(pageIndex,pages.length-1)];
+ const narrationText=pageIndex===0?`${node.title}\n\n${currentPage}`:currentPage;
  const last=pageIndex>=pages.length-1;
  const image=sceneShot(episode.id,node.id,pageIndex)||episode.image;
  const earlierEcho=node.kind==='ending'?memoryEcho(episode.id,game.history):null;
@@ -55,7 +56,7 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
      <span className="v11-kicker">{node.kind==='decision'?'À TOI DE JOUER':node.kind==='ending'?'UNE FIN POSSIBLE':'TON HISTOIRE'}</span>
      <h1>{node.title}</h1>
      <div className="v11-readable-text">{currentPage}</div>
-     <AudioNarrator text={currentPage} pageKey={`${episode.id}:${node.id}:${pageIndex}:${variation.mode}`} recording={findNarration(episode.id,node.id,pageIndex,currentPage)} />
+     <AudioNarrator text={narrationText} pageKey={`${episode.id}:${node.id}:${pageIndex}:${variation.mode}`} recording={findNarration(episode.id,node.id,pageIndex,narrationText)} />
      {earlierEcho&&last&&<div className="v12-choice-impact"><span>DES CHOIX QUI REVIENNENT</span><p>{earlierEcho}</p></div>}
      {visibleConsequence&&cause&&pageIndex===0&&<div className="v12-choice-impact"><span>↳ CONSÉQUENCE D’UN CHOIX PRÉCÉDENT</span><strong>{cause.label}</strong></div>}
      {(variation.dialogue||adaptiveReply)&&pageIndex===0&&<blockquote className="v11-character-line"><span>{node.speaker||'DANS LA SCÈNE'}</span><p>{node.kind==='reaction'&&adaptiveReply?adaptiveReply:variation.dialogue}</p></blockquote>}
