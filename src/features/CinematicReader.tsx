@@ -56,7 +56,7 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
      <span className="v11-kicker">{node.kind==='decision'?'À TOI DE JOUER':node.kind==='ending'?'UNE FIN POSSIBLE':'TON HISTOIRE'}</span>
      <h1>{node.title}</h1>
      <div className="v11-readable-text">{currentPage}</div>
-     <AudioNarrator text={narrationText} pageKey={`${episode.id}:${node.id}:${pageIndex}:${variation.mode}`} recording={findNarration(episode.id,node.id,pageIndex,narrationText)} />
+     <AudioNarrator text={narrationText} pageKey={`${episode.id}:${node.id}:${pageIndex}:${variation.mode}`} recording={findNarration(episode.id,node.id,pageIndex,narrationText)} sampleId={episode.id==='ce-qu-on-na-pas-dit'&&node.id==='ouverture'&&pageIndex===0&&narrationText==='Le lundi où tout allait encore bien\\n\\nLéa et Noa sont amis depuis trois ans. Chaque lundi, ils se retrouvent à l’atelier de dessin du collège. Ils inventent ensemble une ville imaginaire dans un carnet bleu.'?'ce-qu-on-na-pas-dit/ouverture/0':null} />
      {earlierEcho&&last&&<div className="v12-choice-impact"><span>DES CHOIX QUI REVIENNENT</span><p>{earlierEcho}</p></div>}
      {visibleConsequence&&cause&&pageIndex===0&&<div className="v12-choice-impact"><span>↳ CONSÉQUENCE D’UN CHOIX PRÉCÉDENT</span><strong>{cause.label}</strong></div>}
      {(variation.dialogue||adaptiveReply)&&pageIndex===0&&<blockquote className="v11-character-line"><span>{node.speaker||'DANS LA SCÈNE'}</span><p>{node.kind==='reaction'&&adaptiveReply?adaptiveReply:variation.dialogue}</p></blockquote>}
