@@ -1,3 +1,4 @@
+import {decisionScenes} from './decisionScenes.ts';
 import {episode01} from './episode01.ts';
 import {enrichEpisode} from './enrich.ts';
 import {expandEpisode01} from './episode01Novel.ts';
@@ -12,12 +13,35 @@ function makeEpisode(d:Draft):Episode{
  }
  nodes['premier-choix']={id:'premier-choix',kind:'decision',phase:'01',eyebrow:'LE PREMIER MOT',title:'Comment réagirais-tu ?',speaker:d.protagonist.toUpperCase(),text:d.decision,choices:d.choices.map((v,i)=>C(['exprimer','eviter','questionner'][i],['Exprimer son ressenti','Éviter pour l’instant','Chercher à comprendre'][i],v,`reponse-${i}`,(['express','avoid','ask'] as const)[i],i===0?1:i===1?-1:2,i===0?0:i===1?1:-1,i===1?-1:1))};
  for(let i=0;i<3;i++){
-  nodes[`reponse-${i}`]={id:`reponse-${i}`,kind:'reaction',phase:'02',eyebrow:'SA RÉACTION',title:d.reactionTitles[i],speaker:d.other.toUpperCase(),dialogue:d.reactions[i],text:'Une réponse n’efface pas tout. Le ton, les silences et le vécu de chacun peuvent encore modifier la suite.',observation:'Écoute aussi ce qui est difficile à dire. Comprendre n’oblige pas à tout accepter.',next:`second-${i}`};
+  nodes[`reponse-${i}`]={id:`reponse-${i}`,kind:'reaction',phase:'02',eyebrow:'SA RÉACTION',title:d.reactionTitles[i],speaker:d.other.toUpperCase(),dialogue:d.reactions[i],text:decisionScenes[d.id].reactions[i],observation:'Écoute aussi ce qui est difficile à dire. Comprendre n’oblige pas à tout accepter.',next:`second-${i}`};
   nodes[`second-${i}`]={id:`second-${i}`,kind:'decision',phase:'03',eyebrow:'LA SUITE DÉPEND DE TOI',title:'Et maintenant ?',text:d.secondQuestion[i],speaker:d.protagonist.toUpperCase(),choices:d.secondChoices[i].map((s,j)=>C(`e${i}-${j}`,['Oser une parole','Prendre du recul','Essayer un autre chemin'][j],s,`fin-${i}-${j}`,(['express','pause','repair'] as const)[j],j===0?2:j===1?-1:1,j===1?0:-1,j===0?2:1))};
   for(let j=0;j<3;j++){
    const [title,dialogue,text]=d.endings[i*3+j];
    nodes[`fin-${i}-${j}`]={id:`fin-${i}-${j}`,kind:'ending',phase:'04',eyebrow:'UNE FIN POSSIBLE',title,speaker:d.other.toUpperCase(),dialogue,text,perspective:d.perspectives[i],takeaway:'Tes choix ont fait évoluer cette version de l’histoire. Tu peux la rejouer autrement sans chercher une « bonne » réponse.'};
   }
+ }
+ if(d.id==='le-message-de-trop'){
+  // Keep the published ending ID so earlier journeys still resolve.
+  const offer=nodes['second-0'].choices!.find(choice=>choice.id==='e0-2')!;
+  offer.next='avant-le-groupe';
+  nodes['avant-le-groupe']={
+   id:'avant-le-groupe',kind:'decision',phase:'03',eyebrow:'LE MESSAGE EN BROUILLON',
+   title:'Qui doit lire ces mots ?',speaker:'INÈS',
+   text:'Sami a écrit son message pour le groupe. Il reste une phrase avec le prénom d’Inès. Avant d’appuyer sur envoyer, il lui montre son écran.',
+   dialogue:'« Tu peux dire que c’est toi. Mais je ne veux pas que tout le monde m’écrive après. »',
+   choices:[
+    C('groupe-sans-nom','Retirer son prénom','« Je vais leur demander de supprimer la capture, sans te nommer. »','groupe-retrait','repair',1,-1,1),
+    C('groupe-en-prive','Écrire à chacun en privé','« Je vais commencer par ceux à qui je l’ai envoyée. »','groupe-prive','express',1,0,1),
+   ],
+  };
+  nodes['groupe-retrait']={
+   id:'groupe-retrait',kind:'scene',phase:'03',eyebrow:'DANS LE GROUPE',
+   title:'Un message à son nom',text:'Sami efface le prénom d’Inès. « La capture venait de moi. Supprimez-la, s’il vous plaît. » Deux camarades confirment. Un troisième demande de quelle photo il parle. Sami referme le clavier sans la renvoyer.',next:'fin-0-2',
+  };
+  nodes['groupe-prive']={
+   id:'groupe-prive',kind:'scene',phase:'03',eyebrow:'EN PRIVÉ',
+   title:'Une réponse à la fois',text:'Sami écrit séparément aux trois personnes à qui il avait envoyé la capture. L’une a déjà effacé la photo. Une autre avoue l’avoir transmise et propose de contacter la personne suivante. Le troisième message reste sans réponse.',next:'fin-0-2',
+  };
  }
  return {id:d.id,title:d.title,subtitle:d.subtitle,age:'12–18 ans',duration:'8–12 minutes',emotions:d.emotions,image:`/assets/episode${String(d.number).padStart(2,'0')}.webp`,start:'souvenir',nodes};
 }

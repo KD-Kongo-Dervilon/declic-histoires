@@ -28,7 +28,11 @@ export function loadProgress():Progress {
    const a=j as Partial<Journey>;
    const ep=season.find(e=>e.id===a.episodeId);
    return !!ep&&typeof a.endingId==='string'&&ep.nodes[a.endingId]?.kind==='ending'&&Array.isArray(a.choices)&&typeof a.finishedAt==='string';
-  }).slice(-60):[];
+  }).slice(-60).map((journey:Journey)=>({
+   ...journey,
+   emotions:Array.isArray(journey.emotions)?journey.emotions:[],
+   impact:{relation:0,tension:0,expression:0,...(journey.impact as Partial<Impact>)}
+  })):[];
   return {completed,endings,lastEpisode,journeys};
  }catch{return emptyProgress()}
 }

@@ -49,17 +49,17 @@ export function expandEpisode01(ep:Episode):Episode {
   'Léa a mal. Elle ne sait pas encore si Noa l’a remplacée ou s’il y a une autre explication. Que fais-tu ?',[
    C('photo-direct','Demander directement à Noa','« J’ai vu la photo. Je suis surprise. On peut en parler au banc ? »','photo-suite-direct','express',2,-1,2),
    C('photo-camille','Demander à Camille','Tu veux savoir de quoi il s’agit avant de voir Noa.','photo-suite-camille','ask',0,0,1),
-   C('photo-ignore','Ne pas répondre','Tu ranges ton téléphone et files en cours.','photo-suite-ignore','avoid',-1,2,-1)
+   C('photo-ignore','Ne pas répondre','Tu ranges ton téléphone et reprends le chemin de la maison.','photo-suite-ignore','avoid',-1,2,-1)
   ]);
  n['photo-suite-direct']=S('photo-suite-direct','03','La réponse de Noa',
-  'Noa répond aussitôt : « Oui. Je voulais justement te raconter. » Léa n’a pas la réponse, mais elle sait désormais qu’il accepte la conversation. Elle attend la pause avec un nœud dans le ventre.','banc-arrivee');
+  'Noa répond aussitôt : « Oui. Je voulais justement te raconter. » Léa n’a pas la réponse, mais elle sait désormais qu’il accepte la conversation. Le lendemain, elle arrive au collège avec un nœud dans le ventre.','banc-arrivee');
  n['photo-suite-camille']=S('photo-suite-camille','03','Ce que Camille sait vraiment',
   'Camille explique : « Le professeur a ajouté une séance mardi. Noa était libre, alors il a aidé. Je ne sais pas pourquoi il ne t’a pas écrit. » Léa comprend qu’elle a un fait, mais toujours pas ses intentions.','banc-arrivee');
  n['photo-suite-ignore']=S('photo-suite-ignore','03','Un silence qui inquiète',
   'Noa envoie un deuxième message : « Tout va bien ? » Léa le laisse sans réponse. Cela lui donne quelques minutes de répit, mais Noa arrivera au banc sans comprendre son silence.','banc-arrivee');
  // Reactions to earlier choices at the *same* rendezvous.
  n['banc-arrivee']=S('banc-arrivee','04','Mercredi matin, au banc',
-  'La cour se remplit peu à peu. Noa attend près du banc où ils relisent d’habitude leur carnet. Il tient une feuille de l’atelier. Léa s’arrête à deux pas. La veille, ils ne s’étaient pas parlé depuis la photographie. Maintenant, aucun des deux ne peut faire semblant.','banc-echo',
+  'La cour se remplit peu à peu. Noa attend près du banc où ils relisent d’habitude leur carnet. Il tient une feuille de l’atelier. Léa s’arrête à deux pas. C’est la première fois qu’ils se retrouvent face à face depuis la photographie. Maintenant, aucun des deux ne peut faire semblant.','banc-echo',
   {nextByChoice:{'photo-direct':'echo-direct','photo-camille':'echo-camille','photo-ignore':'echo-ignore'}});
  n['banc-echo']=S('banc-echo','04','Une seconde de trop',
   'Léa respire. Le garçon devant elle est toujours son ami. Cela ne rend pas sa déception moins réelle.','choix-banc',
