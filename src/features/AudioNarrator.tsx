@@ -1,4 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
+import './audio-narrator.css';
 
 type Status='idle'|'playing'|'paused';
 type Props={text:string;pageKey:string};
