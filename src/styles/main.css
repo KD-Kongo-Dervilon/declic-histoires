@@ -404,3 +404,41 @@
 }
 .v5-app .catalog-dashboard .catalog-main{max-width:none;width:100%}
 .v5-app .catalog-dashboard .v5-status{width:100%}
+
+/* Longer scenes and unobtrusive controls keep attention on the story. */
+.reader-comfort{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.reader-comfort button,.reader-variation button{border:1px solid #526571;border-radius:999px;background:transparent;color:#e8cfb0;padding:10px 16px;min-height:44px;font-size:.78rem;font-weight:500;line-height:1.3}
+.reader-comfort button[aria-pressed=true]{background:#243640;border-color:#d8b17e}
+.v11-readable-text{font-family:Georgia,'Times New Roman',serif;font-size:calc(clamp(1.13rem,1.35vw,1.4rem)*var(--reader-scale,1));line-height:1.85;max-width:52ch}
+.v11-reading-pane{max-width:880px}
+.v11-readable-text,.story-afterword{overflow-wrap:break-word}
+.story-afterword{margin:28px 0 0;border-top:1px solid #50606b;padding-top:22px;font:italic 1.05rem/1.8 Georgia,serif;color:#d9c4a7}
+.reader-variation{margin-top:28px;font-size:.8rem;color:#b7c3c8}
+.reader-variation summary{cursor:pointer;min-height:44px;padding:12px 0}
+.reader-variation p{line-height:1.8}.reader-variation small{display:block;margin-top:10px}
+.is-night .v11-reader,.is-night .v11-reading-pane{background:#090f14}
+.is-night .v11-book-art{background:#0e171f}
+.is-night .v11-book-art__visual img{filter:brightness(.72) saturate(.85)}
+.is-night .v11-readable-text{color:#d1ccc4}
+.is-night .v11-page-turn h1{color:#e0d6c7}
+.is-night .v11-primary{background:#ceaa81}
+.is-night.is-high-contrast .v11-readable-text{color:#fff}
+.genre-list{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+.genre-list button{padding:10px 14px;min-height:44px;color:#d3dde0;border:1px solid #46606c;border-radius:8px;background:#10232d;font-size:.8rem}
+.genre-list button[aria-pressed=true]{background:#edbd89;color:#11212b;border-color:#edbd89}
+.catalog-filters{min-width:0;grid-column:1;grid-row:2;order:1}
+.catalog-empty{grid-column:1;color:#d5dfe2}
+.catalog-empty button{background:transparent;color:#e9bd89;border:0;text-decoration:underline;min-height:44px}
+@media(min-width:1180px){
+ .v5-app .catalog-dashboard .catalog-main{grid-template-rows:auto auto auto auto}
+ .v5-app .catalog-dashboard .catalog-main .catalog-filters .filter-list{padding:2px 0 8px}
+}
+@media(max-width:760px){
+ .reader-comfort{justify-content:flex-start;margin-bottom:14px}
+ .v11-readable-text{font-size:calc(1.13rem*var(--reader-scale,1));line-height:1.8}
+ .catalog-filters{order:1}
+ .v5-app .catalog-dashboard .catalog-main .catalog-filters .filter-list{margin-bottom:0}
+}
+.reader-proposal{padding:15px;margin-top:14px;border:1px solid #6c8b8d;border-radius:12px;background:#132e36}
+.reader-proposal p{margin:0 0 8px;line-height:1.5}
+.reader-proposal strong{display:block;margin-bottom:12px}
