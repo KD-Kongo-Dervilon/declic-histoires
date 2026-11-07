@@ -12,8 +12,8 @@ export default async function handler(req:any,res:any){
  if(!host||!origin||origin!=='https://'+host)return respond(res,403,'Origine non autorisée');
  if(Number(req.headers['content-length']||0)>1000)return respond(res,413,'Requête trop grande');
  // Do not enable in production. This route is for testing a single sample.
- if(process.env.VERCEL_ENV==='production'||process.env.ELEVENLABS_TTS_ENABLED!=='true'){
-  return respond(res,503,'Narration ElevenLabs non activée sur cette prévisualisation');
+ if(process.env.VERCEL_ENV==='production'){
+  return respond(res,503,'Narration ElevenLabs réservée à la prévisualisation');
  }
  const apiKey=process.env.ELEVENLABS_API_KEY;
  if(!apiKey)return respond(res,503,'Clé ElevenLabs manquante sur Vercel');
