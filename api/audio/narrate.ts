@@ -1,9 +1,22 @@
-// Preview-only TTS proof of concept. The service never accepts arbitrary text.
+// Single-sample, preview-only ElevenLabs narration test. No arbitrary client text.
 const VOICE_ID='sANWqF1bCMzR6eyZbCGw';
 const SAMPLE='ce-qu-on-na-pas-dit/ouverture/0';
 const TEXT='Le lundi où tout allait encore bien\n\nLéa et Noa sont amis depuis trois ans. Chaque lundi, ils se retrouvent à l’atelier de dessin du collège. Ils inventent ensemble une ville imaginaire dans un carnet bleu.';
-function respond(res:any,code:number,msg:string){
- res.status(code).setHeader('Cache-Control','no-store').json({error:msg});
+function respond(res:any,code:number,msg:string,reason?:string){
+ return res.status(code).setHeader('Cache-Control','no-store').json({error:msg,...(reason?{reason}:{})});
+}
+function providerError(code:number,reason:string):string{
+ if(['voice_not_found','voice_access_denied','voice_not_in_library'].includes(reason)||code===404)
+  return 'Cette voix ElevenLabs n’est pas accessible avec ta clé. Ajoute-la à « Mes voix » dans ElevenLabs, puis réessaie.';
+ if(['invalid_api_key','authentication_error'].includes(reason)||code===401)
+  return 'La clé API ElevenLabs est refusée. Vérifie la valeur enregistrée dans Vercel.';
+ if(['missing_permissions','authorization_error','model_access_denied','feature_not_available','subscription_required'].includes(reason)||code===403)
+  return 'La clé ou le forfait ElevenLabs n’autorise pas cette génération. Vérifie les permissions Text to Speech.';
+ if(['insufficient_credits','quota_exceeded','payment_required'].includes(reason)||code===402)
+  return 'Crédits ElevenLabs insuffisants pour générer cet extrait.';
+ if(code===429)return 'Limite de requêtes ElevenLabs atteinte. Réessaie plus tard.';
+ if(code===400||code===422)return 'ElevenLabs rejette les paramètres de cette voix ou de ce modèle.';
+ return 'ElevenLabs a refusé la génération. Vérifie les droits de cette voix et les crédits du compte.';
 }
 export default async function handler(req:any,res:any){
  if(req.method!=='POST')return respond(res,405,'Méthode non autorisée');
@@ -11,10 +24,7 @@ export default async function handler(req:any,res:any){
  const host=req.headers.host;
  if(!host||!origin||origin!=='https://'+host)return respond(res,403,'Origine non autorisée');
  if(Number(req.headers['content-length']||0)>1000)return respond(res,413,'Requête trop grande');
- // Do not enable in production. This route is for testing a single sample.
- if(process.env.VERCEL_ENV==='production'){
-  return respond(res,503,'Narration ElevenLabs réservée à la prévisualisation');
- }
+ if(process.env.VERCEL_ENV==='production')return respond(res,503,'Narration ElevenLabs réservée à la prévisualisation');
  const apiKey=process.env.ELEVENLABS_API_KEY;
  if(!apiKey)return respond(res,503,'Clé ElevenLabs manquante sur Vercel');
  let body:any=req.body;
@@ -30,16 +40,25 @@ export default async function handler(req:any,res:any){
    signal:controller.signal
   });
   if(!upstream.ok){
-   if(upstream.status===401||upstream.status===403)return respond(res,502,'Clé ou accès à la voix ElevenLabs invalide');
-   if(upstream.status===429)return respond(res,429,'Quota ElevenLabs atteint');
-   return respond(res,502,'ElevenLabs n’a pas pu générer cet extrait');
+   let providerReason='';
+   try{
+    const raw=await upstream.json() as {detail?:{status?:unknown,code?:unknown},error?:{code?:unknown}};
+    const candidate=raw.detail?.status||raw.detail?.code||raw.error?.code;
+    if(typeof candidate==='string'&&/^[a-z0-9_]{1,60}$/i.test(candidate))providerReason=candidate;
+   }catch{}
+   // Only return a safe standardized code; never return provider text, headers or secrets.
+   const message=providerError(upstream.status,providerReason);
+   console.warn('ElevenLabs TTS rejected',{httpStatus:upstream.status,reason:providerReason||'unknown'});
+   return respond(res,upstream.status===429?429:502,message,providerReason||'http_'+upstream.status);
   }
   const data=Buffer.from(await upstream.arrayBuffer());
-  if(data.length===0||data.length>3_000_000)return respond(res,502,'Audio inattendu');
+  if(!data.length||data.length>3_000_000)return respond(res,502,'Format audio inattendu');
   res.setHeader('Content-Type','audio/mpeg');
   res.setHeader('Cache-Control','private, no-store');
   res.setHeader('Content-Length',data.length);
   return res.status(200).end(data);
- }catch{return respond(res,502,'La génération vocale a échoué')}
- finally{clearTimeout(timeout)}
+ }catch(e){
+  console.warn('ElevenLabs TTS transport error',e instanceof Error?e.name:'unknown');
+  return respond(res,502,'Impossible de contacter ElevenLabs pour générer la voix');
+ }finally{clearTimeout(timeout)}
 }
