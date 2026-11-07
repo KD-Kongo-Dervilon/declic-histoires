@@ -10,10 +10,14 @@ function providerError(code:number,reason:string):string{
   return 'Cette voix ElevenLabs n’est pas accessible avec ta clé. Ajoute-la à « Mes voix » dans ElevenLabs, puis réessaie.';
  if(['invalid_api_key','authentication_error'].includes(reason)||code===401)
   return 'La clé API ElevenLabs est refusée. Vérifie la valeur enregistrée dans Vercel.';
- if(['missing_permissions','authorization_error','model_access_denied','feature_not_available','subscription_required'].includes(reason)||code===403)
+ if(['missing_permissions','insufficient_permissions','authorization_error','model_access_denied'].includes(reason)||code===403)
   return 'La clé ou le forfait ElevenLabs n’autorise pas cette génération. Vérifie les permissions Text to Speech.';
- if(['insufficient_credits','quota_exceeded','payment_required'].includes(reason)||code===402)
-  return 'Crédits ElevenLabs insuffisants pour générer cet extrait.';
+ if(['paid_plan_required','free_users_not_allowed','subscription_required','feature_not_available'].includes(reason))
+  return 'La voix sélectionnée requiert un forfait ElevenLabs payant pour être utilisée via l’API. Tes crédits gratuits ne sont pas épuisés.';
+ if(['insufficient_credits','quota_exceeded'].includes(reason))
+  return 'Crédits ElevenLabs insuffisants pour cette génération.';
+ if(code===402)
+  return 'ElevenLabs exige un paiement ou un forfait supérieur pour cette génération. Cela ne signifie pas forcément que tes crédits sont épuisés.';
  if(code===429)return 'Limite de requêtes ElevenLabs atteinte. Réessaie plus tard.';
  if(code===400||code===422)return 'ElevenLabs rejette les paramètres de cette voix ou de ce modèle.';
  return 'ElevenLabs a refusé la génération. Vérifie les droits de cette voix et les crédits du compte.';
@@ -43,7 +47,7 @@ export default async function handler(req:any,res:any){
    let providerReason='';
    try{
     const raw=await upstream.json() as {detail?:{status?:unknown,code?:unknown},error?:{code?:unknown}};
-    const candidate=raw.detail?.status||raw.detail?.code||raw.error?.code;
+    const candidate=raw.detail?.code||raw.detail?.status||raw.error?.code;
     if(typeof candidate==='string'&&/^[a-z0-9_]{1,60}$/i.test(candidate))providerReason=candidate;
    }catch{}
    // Only return a safe standardized code; never return provider text, headers or secrets.
