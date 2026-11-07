@@ -40,3 +40,9 @@ Exemple à adapter (texte et noms fictifs, **ne pas recopier tels quels**) :
 - Tester le rendu de la voix, le chargement des assets et les transitions sur de vrais appareils.
 - Ne jamais inscrire `ELEVENLABS_API_KEY` dans le code source, le manifeste, l'interface web ou un commit GitHub.
 - Évaluer le poids des MP3 et la politique de cache PWA pour éviter de télécharger toute la bibliothèque hors ligne.
+
+## Essai direct par API (sans téléchargement MP3)
+
+L'API `/api/audio/narrate` accepte uniquement l'identifiant `ce-qu-on-na-pas-dit/ouverture/0` et génère la voix `sANWqF1bCMzR6eyZbCGw` pour le titre et les trois premières phrases de l'ouverture. Elle n'accepte **aucun texte utilisateur** et refuse la production. Une seule clé, `ELEVENLABS_API_KEY`, doit être ajoutée au projet Vercel `declic-v4-staging`, cible Preview (encrypted). Le code navigateur ne contient aucun secret. Les audios sont conservés en mémoire pendant l'onglet; recharger l'onglet peut consommer une génération supplémentaire. **Ne pas ouvrir ce point d'accès au public sans limitation persistante des requêtes et budget**. Cette intégration ne sert qu'à un test privé non commercial sur le plan gratuit.
+
+Si le serveur répond `Clé ElevenLabs manquante sur Vercel`, ouvrir Vercel → `declic-v4-staging` → Settings → Environment Variables, puis créer la variable chiffrée `ELEVENLABS_API_KEY` pour Preview; redéployer la branche pour la prendre en compte. Ne pas envoyer ou committer la clé, ni l'intégrer dans `VITE_...`.
