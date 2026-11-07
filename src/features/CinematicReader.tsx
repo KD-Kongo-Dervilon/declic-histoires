@@ -3,6 +3,7 @@ import type {Episode,NarrativeNode,StoryState} from '../types';
 import {bookPages,sceneShot} from './readability';
 import {narratePage,narrativeAIEnabled} from '../services/narrative';
 import {memoryEcho} from './continuity';
+import {AudioNarrator} from './AudioNarrator';
 
 type Props={episode:Episode;node:NarrativeNode;game:StoryState;episodeIndex:number;knownEndings:number;emotion:string;onEmotion:(v:string)=>void;onChoose:(id:string)=>void;onNext:()=>void;onComplete:()=>void;onBack:()=>void;onPageTurn:()=>void;onFreeText?:(value:string)=>Promise<void>;busy?:boolean;error?:string;reducedMotion?:boolean;adaptiveReply?:string};
 export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emotion,onEmotion,onChoose,onNext,onComplete,onBack,onPageTurn,onFreeText,busy,error,reducedMotion,adaptiveReply}:Props){
@@ -53,6 +54,7 @@ export function CinematicReader({episode,node,game,episodeIndex,knownEndings,emo
      <span className="v11-kicker">{node.kind==='decision'?'À TOI DE JOUER':node.kind==='ending'?'UNE FIN POSSIBLE':'TON HISTOIRE'}</span>
      <h1>{node.title}</h1>
      <div className="v11-readable-text">{currentPage}</div>
+     <AudioNarrator text={currentPage} pageKey={`${episode.id}:${node.id}:${pageIndex}:${variation.mode}`} />
      {earlierEcho&&last&&<div className="v12-choice-impact"><span>DES CHOIX QUI REVIENNENT</span><p>{earlierEcho}</p></div>}
      {visibleConsequence&&cause&&pageIndex===0&&<div className="v12-choice-impact"><span>↳ CONSÉQUENCE D’UN CHOIX PRÉCÉDENT</span><strong>{cause.label}</strong></div>}
      {(variation.dialogue||adaptiveReply)&&pageIndex===0&&<blockquote className="v11-character-line"><span>{node.speaker||'DANS LA SCÈNE'}</span><p>{node.kind==='reaction'&&adaptiveReply?adaptiveReply:variation.dialogue}</p></blockquote>}
